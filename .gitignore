@@ -132,6 +132,6 @@ dmypy.json
 /tutorials
 
 # Model and data related files
-.unicorn
-.hdf
-.pkl
+*.unicorn
+*.hdf
+*.pkl
