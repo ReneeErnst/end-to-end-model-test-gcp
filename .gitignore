@@ -128,6 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# GCP tutorials
+/tutorials
+
 # Model and data related files
 .unicorn
 .hdf
