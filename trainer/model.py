@@ -12,13 +12,13 @@ BUCKET_NAME = 'python-testing-re'
 # Get the data
 # ToDo: Add check if running locally or in the cloud to fill these out
 # Client when running in GCP
-client = bigquery.Client(location='US')
+# client = bigquery.Client(location='US')
 
 # Client when running locally
-# client = bigquery.Client.from_service_account_json(
-#     'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json',
-#     location='US'
-# )
+client = bigquery.Client.from_service_account_json(
+    'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json',
+    location='US'
+)
 
 # ToDo: Set size of data pull based on local vs on GCP
 # noinspection SqlNoDataSourceInspection
@@ -76,12 +76,12 @@ df_mapping.to_hdf(
 # Save mapping to storage
 # ToDo: Create function to determine where running to set this
 # Client when running on GCP
-storage_client = storage.Client()
+# storage_client = storage.Client()
 
 # Client when running locally
-# storage_client = storage.Client.from_service_account_json(
-#     'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json'
-# )
+storage_client = storage.Client.from_service_account_json(
+    'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json'
+)
 
 bucket = storage_client.bucket(BUCKET_NAME)
 blob = bucket.blob('iowa_forecasting_artifacts/categorical_mapping.hdf')
