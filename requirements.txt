@@ -1,2 +1,6 @@
+pandas
+numpy
 h5py
 tables
+google-cloud-bigquery
+google-cloud-storage
