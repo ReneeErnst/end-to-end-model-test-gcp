@@ -12,9 +12,9 @@ gcloud ai-platform local train
   --job-dir local-training-output
   
 # Command to run job via on AI Platform:
-gcloud ai-platform jobs submit training test_job3 
-  --package-path trainer/ 
+gcloud ai-platform jobs submit training test_job 
+  --package-path trainer
   --module-name trainer.model 
   --staging-bucket gs://python-testing-re  
-  --python-version 3.5 
-  --runtime-version 1.14
+  --python-version 3.7 
+  --runtime-version 1.15
