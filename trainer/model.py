@@ -31,7 +31,7 @@ query = """
            item_number,
            date
       FROM `bigquery-public-data.iowa_liquor_sales.sales`
-     LIMIT 100
+     LIMIT 10000
 """
 
 query_job = client.query(query)
