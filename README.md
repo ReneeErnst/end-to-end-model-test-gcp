@@ -28,8 +28,9 @@ f-strings or type hinting)
 
 ### Jupyter via remote execution into AI Platform Notebook Instance
 Prerequisites: 
-1. You must have Anaconda/Jupyter Notebook installed 
-2. If using a windows machine, you must have PuTTY installed
+1. You must have Python 3.5+ with Jupyter installed 
+2. If using a windows machine, you must have PuTTY installed. 
+If using a Mac, you should have a built-in SSH client, so PuTTY is not needed.
 3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install
 
 Helpful Links: 
@@ -39,17 +40,20 @@ Instructions:
 1. On the AI Platform Notebook Instance you created,
 open your VM Instance details.
 On the dropdown for Remote access, select "view gcloud command"
+Your Project-Id, Zone, and Instance Name all need to be in quotations.
 Example: 
-gcloud compute --project "project-name" ssh --zone "us-east1-d" "instance-name"
-
+```
+gcloud compute --project "project-id" ssh --zone "zone-name" "instance-name"
+```
 2. Open your local Google Cloud SDK shell and run the gcloud command
 for connecting.
 Tip- you will want to include a port at this time. Note that the default
-port for Jupyter Notebooks is 8888
+port for Jupyter Notebook is 8888
 Example:
-gcloud compute --project "project-name" ssh --zone "us-east1-d" "instance-name"
+```
+gcloud compute --project "project-id" ssh --zone "zone-name" "instance-name"
 -- -L 8888:localhost:8888
-
+```
 3. Once you run the gcloud command, a PuTTY instance will launch and
 will connect to your AI Platform Notebook instance. Launch Jupyter
 by entering "jupyter-notebook" in your PuTTY instance. 
