@@ -27,7 +27,39 @@ Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no
 f-strings or type hinting)
 
 ### Jupyter via remote execution into AI Platform Notebook Instance
-Coming Soon - Some documentation already complete by team
+Prerequisites: 
+1. You must have Anaconda/Jupyter Notebook installed 
+2. If using a windows machine, you must have PuTTY installed
+3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install
+
+Helpful Links: 
+https://cloud.google.com/ai-platform/notebooks/docs/ssh-access
+
+Instructions:
+1. On the AI Platform Notebook Instance you created,
+open your VM Instance details.
+On the dropdown for Remote access, select "view gcloud command"
+Example: 
+gcloud compute --project "project-name" ssh --zone "us-east1-d" "instance-name"
+
+2. Open your local Google Cloud SDK shell and run the gcloud command
+for connecting.
+Tip- you will want to include a port at this time. Note that the default
+port for Jupyter Notebooks is 8888
+Example:
+gcloud compute --project "project-name" ssh --zone "us-east1-d" "instance-name"
+-- -L 8888:localhost:8888
+
+3. Once you run the gcloud command, a PuTTY instance will launch and
+will connect to your AI Platform Notebook instance. Launch Jupyter
+by entering "jupyter-notebook" in your PuTTY instance. 
+
+4. Copy the token shown in your PuTTY instance. 
+
+5. Enter http://127.0.0.1:8888/ in your browser and paste the token 
+you copied in step #4
+
+Congratulations- You are up and running!
 
 ### Cauldron via remote execution into AI Platform Notebook Instance
 Coming Soon - Our team at GMI uses Cauldron Notebooks in addition to Juptyer. 
