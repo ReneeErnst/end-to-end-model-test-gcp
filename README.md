@@ -30,7 +30,8 @@ f-strings or type hinting)
 Prerequisites: 
 1. You must have Python 3.5+ with Jupyter installed 
 2. If using a windows machine, you must have PuTTY installed. 
-If using a Mac, you should have a built-in SSH client, so PuTTY is not needed.
+   If using a Mac, you should have a built-in SSH client, so PuTTY is not 
+   needed.
 3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install
 
 Helpful Links: 
@@ -43,15 +44,16 @@ On the dropdown for Remote access, select "view gcloud command"
 Your Project-Id, Zone, and Instance Name all need to be in quotations.
 Example: 
 ```
-gcloud compute --project "project-id" ssh --zone "zone-name" "instance-name"
+gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
 ```
+
 2. Open your local Google Cloud SDK shell and run the gcloud command
 for connecting.
 Tip- you will want to include a port at this time. Note that the default
 port for Jupyter Notebook is 8888
 Example:
 ```
-gcloud compute --project "project-id" ssh --zone "zone-name" "instance-name"
+gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
 -- -L 8888:localhost:8888
 ```
 3. Once you run the gcloud command, a PuTTY instance will launch and
@@ -70,44 +72,54 @@ Coming Soon - Our team at GMI uses Cauldron Notebooks in addition to Juptyer.
 
 ## Jobs in AI Platform 
 
-## Simple training job using Jobs in AI Platform
+### Simple training job using Jobs in AI Platform
 For the purpose of testing Jobs in AI Platform I created code for running a 
 Sklearn Random Forest Regression, creating the model objects, and saving them
 out to a bucket. Below is documentation for that process, as well as 
 issues/gotchas I found along the way. 
 
+Helpful Links:
+https://cloud.google.com/ml-engine/docs/training-jobs
+https://cloud.google.com/ml-engine/docs/packaging-trainer
+
+#### Running the job locally
 It is best practice to test training your job locally (usually on a sample of 
 data) to ensure your packaged code is working before submitting your job to run 
 on AI Platform. Make sure to run this from the location of your repo. The 
 command structure for this is:
 
-###### Command for local training job:
+##### Command for local training job:
+Note: Locations reflect structure in this repo, update for your use as 
+appropriate. In this case the model output will get saved to the trainer folder.
 ``` 
 gcloud ai-platform local train  
-  --package-path trainer  
-  --module-name trainer.model 
+  --package-path trainer 
+  --module-name trainer.model
   --job-dir local-training-output
 ```
  
- Note that there are a few lines in the model.py that you need to toggle/change 
- when running locally vs the job on AI Platform. When running locally you need 
- to point to your credentials file and should adjust the query to pull fewer 
- records. 
+Note: There are a few lines in the model.py that you need to toggle/change 
+when running locally vs the job on AI Platform. When running locally you need 
+to point to your credentials file and should adjust the query to pull fewer 
+records. 
  
-##### Results summary for running job locally
- This code ran as expected locally
+#### Results summary for running job locally
+This code ran as expected locally
  
- After testing the job locally, you are ready to create a Job on AI Platform. 
- Make sure to adjust the query in the model.py to pull the right amount of 
- records and that you are using the client code that is not dependent on the 
- local credentials file.
+#### Submit Training job to run in AI Platform
+After testing the job locally, you are ready to create a Job on AI Platform. 
+Make sure to adjust the query in the model.py to pull the right amount of 
+records and that you are using the client code that is not dependent on the 
+local credentials file.
   
-###### Command to run Job on AI Platform (final version after testing):
+##### Command to run Job on AI Platform (final version after testing):
+Note: Locations reflect structure in this repo, update for your use as 
+appropriate. 
 ```
-gcloud ai-platform jobs submit training test_job 
+gcloud ai-platform jobs submit training <job_name> 
   --package-path trainer
   --module-name trainer.model 
-  --staging-bucket gs://python-testing-re  
+  --staging-bucket gs://<your_bucket>
   --python-version 3.7 
   --runtime-version 1.15
 ```
