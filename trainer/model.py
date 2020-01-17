@@ -33,7 +33,7 @@ if RUN_LOCATION == 'local':
     num_records = 100
 else:
     client = bigquery.Client()
-    num_records = 1000000
+    num_records = 100000
 
 # noinspection SqlNoDataSourceInspection
 query = f"""

@@ -228,7 +228,16 @@ Helpful Links:
 https://cloud.google.com/ml-engine/docs/deploying-models
 https://cloud.google.com/ml-engine/docs/custom-prediction-routines
 
-### Step 1: Model and supporting files in a cloud storage bucket
-If deploying a model that was created in AI Platform, this should already be 
-done. For example, the training job in this repo saves the model object and 
-supporting files to a storage bucket. 
+Helpful note from Google (make sure to do this to avoid overwriting files):
+When you create subsequent versions of your model, organize them by placing each
+one into its own separate directory within your Cloud Storage bucket.
+
+Note that if you used the code in this repo, your model object and supporting 
+files are already in a bucket and ready for deployment. 
+
+### Testing with local predictions
+Unfortuantely, at this time you can't test locally if using custom prediction 
+routines. For now we will skip documentation for testing locally. 
+
+### Testing AI Platform Predict
+
