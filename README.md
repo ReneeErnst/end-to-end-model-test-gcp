@@ -70,6 +70,97 @@ Congratulations- You are up and running!
 ### Cauldron via remote execution into AI Platform Notebook Instance
 Coming Soon - Our team at GMI uses Cauldron Notebooks in addition to Juptyer. 
 
+### PyCharm via remote execution into AI Platform Notebook Instance
+Prerequisites: 
+1. You must have Python 3.5+ installed
+2. You must have PyCharm installed with a PyCharm Professional Edition license 
+3. If using a windows machine, you must have PuTTY installed. 
+If using a Mac, you should have a built-in SSH client, so PuTTY is not needed.
+
+Helpful Links: 
+- Managing SSH keys in metadata-
+https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys
+- Creating a Remote Server Configuration in PyCharm-
+https://www.jetbrains.com/help/pycharm/creating-a-remote-server-configuration.html
+
+
+Instructions:
+1. On the AI Platform Notebook Instance you created,
+open your VM Instance details.
+On the dropdown for Remote access, select "SSH". 
+A linux terminal will pop-up in a new window.
+
+2. Follow the steps in the Managing SSH keys in metadata
+link above for creating a new SSH key.
+Example:
+- In the terminal, use the ssh-keygen command to generate a
+private SSH key file and a matching public SSH key file
+```
+ssh-keygen -t rsa -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]
+```
+- You will have the option here to create a passphrase as an 
+additional layer of security
+- Restrict access to your private key so that only you can read it 
+and nobody can write to it
+```
+chmod 400 ~/.ssh/[KEY_FILENAME]
+```
+
+3. Follow the steps in the Managing SSH keys in metadata
+link above for locating an SSH key.
+Locate and save your private key:
+- In the terminal, locate your private key
+```
+cd /home/[USERNAME]/.ssh
+```
+- Click on the settings in your terminal and select "Download File"
+- Enter the filepath to your private key and select "Download"
+```
+/home/[USERNAME]/.ssh/[KEY_FILENAME]
+```
+- Save your private key to your chosen destination
+- IMPORTANT TIP: For windows, you will need to open PuTTYgen and load your
+private key that you saved in the previous step. In PuTTYgen, 
+select "save private key" to your chosen destination. Be sure to enter your
+passphrase if you opted to create one.
+This process converts your private key into the format PuTTY and 
+other third-party tools needs to be able to read it
+
+4. Locate, view, save your public key:
+- Enter the filepath to your public key
+```
+cd /home/[USERNAME]/.ssh
+```
+- View and copy the entirety of the public key
+```
+cat [KEY_FILENAME].pub
+```
+- Navigate to your AI Platform Instance and select "Edit"
+- Scroll to find SSH keys and select "Show and Edit"
+- Select "Add Item" and paste your public key in the box shown
+- Scroll down the page and select "Save"
+
+5. Use your private key to connect PyCharm to your AI Platform Notebook instance
+- Open PyCharm Professional Edition and navigate to
+"File" --> "Settings" --> "Deployment"
+- Select "+" and "SFTP"
+- Enter your Instance External IP in the Host Section
+- IMPORTANT TIP: Your Instance External IP might be ephemeral, so 
+you may have to enter a new External IP each time you connect with PyCharm
+- Enter your username in the User Name section
+- Select authentication type as "Key Pair OpenSSH or PuTTY"
+- Upload your private key in the private key path
+- Enter your passphrase if you saved your private key with one
+- Select "Test Connection" to make sure you are connected 
+- Select "Ok"
+
+6. You are now connected! 
+
+To browse the files you may have saved in 
+your AI Platform Notebook Instance in PyCharm, navigate to
+"Tools" --> "Deployment" --> "Browse Remote Host"
+
+The file directory of your instance should appear on the right side of your screen
 ## Jobs in AI Platform 
 
 ### Simple training job using Jobs in AI Platform
