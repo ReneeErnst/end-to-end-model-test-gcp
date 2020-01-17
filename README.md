@@ -144,8 +144,8 @@ Note: Locations reflect structure in this repo, update for your use as
 appropriate. 
 ```
 gcloud ai-platform jobs submit training <job_name> 
-  --package-path trainer
-  --module-name trainer.model 
+  --package-path modeling
+  --module-name modeling.trainer.model 
   --staging-bucket gs://<your_bucket>
   --python-version 3.7 
   --runtime-version 1.15

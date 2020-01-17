@@ -10,7 +10,7 @@ REQUIRED_PACKAGES = [
 ]
 
 setup(
-    name='trainer',
+    name='modeling',
     author='Renee Ernst',
     version='0.0.1',
     install_requires=REQUIRED_PACKAGES,

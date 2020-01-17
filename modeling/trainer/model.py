@@ -6,8 +6,7 @@ import pandas as pd
 from google.cloud import bigquery
 from google.cloud import storage
 
-import data_prep as dp
-import model_train as mt
+from modeling import model_train as mt, data_prep as dp
 
 parser = argparse.ArgumentParser()
 
