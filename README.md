@@ -21,6 +21,29 @@ manipulation in order to make running a Random Forest Regression predicting
 liquor sales possible. Model quality has not been assessed as this test is for 
 testing workflow rather than creating a usable model.
 
+#### Set Environment variables in AI Platform Notebook 
+In some cases you will want variables that you do not want in your 
+code/committed to git. For example, bucket names, project names, or other bits 
+that your org may prefer to not be in your code. The easiest way to do this is 
+put the info in a file that is not tracked in git and call it. 
+
+**Example:** Create BUCKET_NAME variable
+While in the top folder of your AI Platform Notebook (above folder for repo) run 
+the following command to create text file that contains the name of your bucket:
+```python
+echo <bucket_name> > bucket.txt
+```
+
+In your notebook code, create a variable with your bucket name:
+```python
+import os
+
+bucket_path = os.path.expanduser('~/bucket.txt')
+with open(bucket_path) as f:
+    BUCKET_NAME = f.read().strip()
+```
+
+#### Results Summary
 Coding and running the model in Jupyter Lab was uneventful. Notebook in this 
 repo should meet the needs of basic documentation. Note that because AI Platform
 Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
@@ -194,5 +217,12 @@ Coming Soon
 A more complex job for model training. Can be used during model development. 
 Includes hyperparamater tuning and measuring model quality when training. 
 
-## Model Serving in AI Platform
-Coming Soon
+## Model Deployment in AI Platform
+Helpful Links:
+https://cloud.google.com/ml-engine/docs/deploying-models
+https://cloud.google.com/ml-engine/docs/custom-prediction-routines
+
+### Step 1: Model and supporting files in a cloud storage bucket
+If deploying a model that was created in AI Platform, this should already be 
+done. For example, the training job in this repo saves the model object and 
+supporting files to a storage bucket. 
