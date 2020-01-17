@@ -1,4 +1,6 @@
 import pickle
+import sys
+import argparse
 
 import pandas as pd
 from google.cloud import bigquery
@@ -7,22 +9,34 @@ from google.cloud import storage
 import data_prep as dp
 import model_train as mt
 
-BUCKET_NAME = 'python-testing-re'
+parser = argparse.ArgumentParser()
+
+# --job-dir isn't needed by us, but it gets passed so we need to have this here
+parser.add_argument('--job-dir')
+# passed in name of bucket
+parser.add_argument('--bucket')
+# passed in info on if running locally
+parser.add_argument('--run_location')
+
+args = parser.parse_args(sys.argv[1:])
+print(vars(args))
+
+BUCKET_NAME = args.bucket
+RUN_LOCATION = args.run_location
 
 # Get the data
-# ToDo: Add check if running locally or in the cloud to fill these out
-# Client when running in GCP
-client = bigquery.Client()
+if RUN_LOCATION == 'local':
+    client = bigquery.Client.from_service_account_json(
+        'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json',
+        location='US'
+    )
+    num_records = 100
+else:
+    client = bigquery.Client()
+    num_records = 1000000
 
-# Client when running locally
-# client = bigquery.Client.from_service_account_json(
-#     'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json',
-#     location='US'
-# )
-
-# ToDo: Set size of data pull based on local vs on GCP
 # noinspection SqlNoDataSourceInspection
-query = """
+query = f"""
     SELECT sale_dollars,
            city,
            county_number,
@@ -31,7 +45,7 @@ query = """
            item_number,
            date
       FROM `bigquery-public-data.iowa_liquor_sales.sales`
-     LIMIT 10000
+     LIMIT {num_records}
 """
 
 query_job = client.query(query)
@@ -71,14 +85,12 @@ df_mapping.to_hdf(
 )
 
 # Save mapping to storage
-# ToDo: Create function to determine where running to set this
-# Client when running on GCP
-storage_client = storage.Client()
-
-# Client when running locally
-# storage_client = storage.Client.from_service_account_json(
-#     'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json'
-# )
+if RUN_LOCATION == 'local':
+    storage_client = storage.Client.from_service_account_json(
+        'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json'
+    )
+else:
+    storage_client = storage.Client()
 
 bucket = storage_client.bucket(BUCKET_NAME)
 blob = bucket.blob('iowa_forecasting_artifacts/categorical_mapping.hdf')
