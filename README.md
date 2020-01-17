@@ -113,18 +113,22 @@ command structure for this is:
 
 ##### Command for local training job:
 Note: Locations reflect structure in this repo, update for your use as 
-appropriate. In this case the model output will get saved to the trainer folder.
+appropriate. In this case the model output will get saved to the main 
+directory/repo folder.
+
+Passing in user args for bucket and run location. Adding the bucket env allows 
+keeping that info out of the code and the run location allows having the code 
+run differently depending on if doing this local job or running in AI Platform. 
+
 ``` 
 gcloud ai-platform local train  
   --package-path trainer 
   --module-name trainer.model
   --job-dir local-training-output
+  --
+  --bucket=<bucket_name>
+  --run_locatin=local
 ```
- 
-Note: There are a few lines in the model.py that you need to toggle/change 
-when running locally vs the job on AI Platform. When running locally you need 
-to point to your credentials file and should adjust the query to pull fewer 
-records. 
  
 #### Results summary for running job locally
 This code ran as expected locally
@@ -145,6 +149,8 @@ gcloud ai-platform jobs submit training <job_name>
   --staging-bucket gs://<your_bucket>
   --python-version 3.7 
   --runtime-version 1.15
+  --
+  --bucket=<bucket_name>
 ```
 
 ##### Tests and Results for Running Job on AI Platform

@@ -93,7 +93,8 @@ else:
     storage_client = storage.Client()
 
 bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob('iowa_forecasting_artifacts/categorical_mapping.hdf')
+blob = bucket.blob(
+    'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.hdf')
 blob.upload_from_filename('categorical_mapping.hdf')
 
 # Set variable we are predicting for and predictors
@@ -124,5 +125,5 @@ pickle.dump(
 )
 
 bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob('iowa_forecasting_artifacts/model_test.pkl')
+blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model_test.pkl')
 blob.upload_from_filename('model_test.pkl')
