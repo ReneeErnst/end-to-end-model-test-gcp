@@ -3,25 +3,27 @@ from modeling import data_prep as dp
 
 
 class Predictor:
-
+    """
+    Predictor to be used in AI Platform to get model predictions
+    """
     def __init__(self, model, mapping_df):
+        """
+        Artifacts needed to make model predictions
+        :param model: sklearn random forest regression model object
+        :param mapping_df: dataframe with category mapping created during model
+        training
+        """
         self.model = model
         self.mapping_df = mapping_df
 
     def predict(self, instances, **kwargs):
-        """Performs custom prediction.
-
-        Instances are the decoded values from the request. They have already
-        been deserialized from JSON.
-
-        Args:
-            instances: A list of prediction input instances.
-            **kwargs: A dictionary of keyword args provided as additional
-                fields on the predict request body.
-
-        Returns:
-            A list of outputs containing the prediction results. This list must
-            be JSON serializable.
+        """
+        Create custom prediction routine
+        :param instances: A list of prediction input instances
+        :param kwargs: dictionary of keyword args provided as additional fields
+        on the predict request body. but not currently used.
+        :return: A list of outputs containing the prediction results. This list
+        must be JSON serializable.
         """
         # Convert passed data into a dataframe
         df = pd.DataFrame(instances)
@@ -58,28 +60,24 @@ class Predictor:
 
     @classmethod
     def from_path(cls, model_dir):
-        """Creates an instance of Predictor using the given path.
-
-        Loading of the predictor should be done in this method.
-
-        Args:
-            model_dir: The local directory that contains the exported model
-                file along with any additional files uploaded when creating the
-                version resource.
-
-        Returns:
-            An instance implementing this Predictor class.
+        """
+        Creates an instance of Predictor using the given path.
+        :param model_dir: The local directory that contains the exported model
+        file along with any additional files uploaded when creating the version
+        resource.
+        :return: An instance implementing this Predictor class.
         """
         model_path = os.path.join(model_dir, 'model_test.pkl')
         mapping_path = os.path.join(model_dir, 'category_mapping.hdf')
+
         # Model
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
 
         # Load category mapping file
-        with open(model_path, 'rb') as f:
+        with open(mapping_path, 'rb') as f:
             mapping_df = pd.read_hdf(
-                mapping_path,
+                f,
                 'df_categorical_mapping'
             )
 

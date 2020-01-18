@@ -112,7 +112,10 @@ on AI Platform. Make sure to run this from the location of your repo. The
 command structure for this is:
 
 ##### Command for local training job:
-Note: Locations reflect structure in this repo, update for your use as 
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
+Locations reflect structure in this repo, update for your use as 
 appropriate. In this case the model output will get saved to the main 
 directory/repo folder.
 
@@ -140,7 +143,10 @@ records and that you are using the client code that is not dependent on the
 local credentials file.
   
 ##### Command to run Job on AI Platform (final version after testing):
-Note: Locations reflect structure in this repo, update for your use as 
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
+Locations reflect structure in this repo, update for your use as 
 appropriate. 
 ```
 gcloud ai-platform jobs submit training <job_name> 
@@ -235,9 +241,28 @@ one into its own separate directory within your Cloud Storage bucket.
 Note that if you used the code in this repo, your model object and supporting 
 files are already in a bucket and ready for deployment. 
 
+### Creation of predict package
+As part of setting up your prediction package, you must create a Predictor class
+implements the instance shown under the Create Your Predictor section here:
+https://cloud.google.com/ml-engine/docs/custom-prediction-routines
+
+It is very important to closely follow the formatting of this as AI Platform 
+strictly expects this format. The predictor module in this repo shows an example
+of working code. 
+
+
+
 ### Testing with local predictions
 Unfortuantely, at this time you can't test locally if using custom prediction 
 routines. For now we will skip documentation for testing locally. 
 
 ### Testing AI Platform Predict
+For simplicity and not duplicating code, I recommend having one package for 
+model training and model deployment. The code structure in this repo allows that
+and as a result only requires a single setup.py. 
+
+#### Command to run AI Platform Prediction Deployment
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
 
