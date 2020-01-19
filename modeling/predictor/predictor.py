@@ -1,5 +1,8 @@
+"""Predictions in GCP AI Platform"""
+import os
+import pickle
+
 import pandas as pd
-from modeling import data_prep as dp
 
 
 class Predictor:
@@ -16,6 +19,7 @@ class Predictor:
         self.model = model
         self.mapping_df = mapping_df
 
+    # noinspection PyUnusedLocal
     def predict(self, instances, **kwargs):
         """
         Create custom prediction routine
@@ -34,7 +38,7 @@ class Predictor:
             column for column in cat_map_columns if '_enc' not in column]
 
         for var in clean_cat_map_columns:
-            df_clean_cat_mapping = df_cat_mapping[[
+            df_clean_cat_mapping = self.mapping_df[[
                 var, f'{var}_enc']].drop_duplicates()
 
             df = df.merge(

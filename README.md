@@ -241,6 +241,10 @@ one into its own separate directory within your Cloud Storage bucket.
 Note that if you used the code in this repo, your model object and supporting 
 files are already in a bucket and ready for deployment. 
 
+### Testing with local predictions
+Unfortuantely, at this time you can't test locally if using custom prediction 
+routines. For now we will skip documentation for testing locally. 
+
 ### Creation of predict package
 As part of setting up your prediction package, you must create a Predictor class
 implements the instance shown under the Create Your Predictor section here:
@@ -250,11 +254,43 @@ It is very important to closely follow the formatting of this as AI Platform
 strictly expects this format. The predictor module in this repo shows an example
 of working code. 
 
+After creating the predictor code, package it and then store it in GCS. Note 
+that Google recommends using a designated staging directory if iterating and 
+creating multiple versions of the custom prediction routine and version can be 
+used in the setup.py for this. This is setup within the setup.py in this repo.
 
+#### Command to package up code:
+```python
+python setup.py sdist --formats=gztar
+```
 
-### Testing with local predictions
-Unfortuantely, at this time you can't test locally if using custom prediction 
-routines. For now we will skip documentation for testing locally. 
+This will create your packaged model in a folder called dist in your repo. Now 
+you need to transfer this package to GCS.
+
+#### Command for transferring package to GCS:
+```
+gsutil cp dist/<package-name>.tar.gz gs://<your-bucket>/<path-to-staging-dir>/
+```
+
+#### Create location for model versions
+After creating the package and transferring it to your storage bucket, you will
+wan't to create a model in AI Platform Models before adding your package as a 
+version. The documentation is a bit unclear on this point. Creating a model by 
+itself does not then host your model. You first need to create the "model" and 
+then add your package as a version. You first want to create model using the 
+following command:
+```
+gcloud ai-platform models create <model-name> --regions <region>
+```
+
+Note: I received an odd error when first attempting this via the gcloud command
+rather than the console. The error indicated that I do not have permission to 
+access my project. This error is not a clear indicator of the true issue given
+that I can access the project in other ways (for example listing ai platform 
+jobs), and I was able to create the model via the console without issue. 
+
+#### Add model prediction package to model as a version
+
 
 ### Testing AI Platform Predict
 For simplicity and not duplicating code, I recommend having one package for 
