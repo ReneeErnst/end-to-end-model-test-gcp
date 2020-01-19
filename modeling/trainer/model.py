@@ -1,6 +1,7 @@
-import pickle
-import sys
+"""Model Training"""
 import argparse
+import sys
+import pickle
 
 import pandas as pd
 from google.cloud import bigquery
@@ -76,12 +77,7 @@ df_cat, df_mapping = dp.category_columns(
 df_cat = df_cat.round({'sale_dollars': 2})
 
 # Save categorical mapping file
-df_mapping.to_hdf(
-    'categorical_mapping.hdf',
-    'df_cat_map',
-    format='table',
-    mode='w'
-)
+df_mapping.to_pickle('categorical_mapping.pkl')
 
 # Save mapping to storage
 if RUN_LOCATION == 'local':
@@ -93,8 +89,8 @@ else:
 
 bucket = storage_client.bucket(BUCKET_NAME)
 blob = bucket.blob(
-    'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.hdf')
-blob.upload_from_filename('categorical_mapping.hdf')
+    'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.pkl')
+blob.upload_from_filename('categorical_mapping.pkl')
 
 # Set variable we are predicting for and predictors
 y_col = 'sale_dollars'
@@ -120,9 +116,9 @@ rfr_model, importances = mt.fit_model(
 
 pickle.dump(
     rfr_model,
-    open('model_test.pkl', 'wb')
+    open('model.pkl', 'wb')
 )
 
 bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model_test.pkl')
-blob.upload_from_filename('model_test.pkl')
+blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model.pkl')
+blob.upload_from_filename('model.pkl')

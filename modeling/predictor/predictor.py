@@ -71,18 +71,13 @@ class Predictor:
         resource.
         :return: An instance implementing this Predictor class.
         """
-        model_path = os.path.join(model_dir, 'model_test.pkl')
-        mapping_path = os.path.join(model_dir, 'category_mapping.hdf')
-
         # Model
+        model_path = os.path.join(model_dir, 'model.pkl')
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
 
         # Load category mapping file
-        with open(mapping_path, 'rb') as f:
-            mapping_df = pd.read_hdf(
-                f,
-                'df_categorical_mapping'
-            )
+        mapping_path = os.path.join(model_dir, 'categorical_mapping.pkl')
+        mapping_df = pd.read_pickle(mapping_path)
 
         return cls(model, mapping_df)

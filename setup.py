@@ -12,6 +12,7 @@ REQUIRED_PACKAGES = [
 setup(
     name='modeling',
     author='Renee Ernst',
+    author_email='renee.ernst@genmills.com',
     version='0.0.2',
     install_requires=REQUIRED_PACKAGES,
     packages=find_packages(),

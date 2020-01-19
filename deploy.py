@@ -100,7 +100,7 @@ def deploy_predictor(args: argparse.Namespace):
         '--origin', f'{args.origin}',
         '--package-uris', f'{args.package_path}',
         '--prediction-class', f'{args.prediction_class}',
-
+        '--verbosity=debug'
     ]
     result = subprocess.run(command)
 

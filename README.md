@@ -30,7 +30,7 @@ put the info in a file that is not tracked in git and call it.
 **Example:** Create BUCKET_NAME variable
 While in the top folder of your AI Platform Notebook (above folder for repo) run 
 the following command to create text file that contains the name of your bucket:
-```python
+```
 echo <bucket_name> > bucket.txt
 ```
 
@@ -289,8 +289,38 @@ access my project. This error is not a clear indicator of the true issue given
 that I can access the project in other ways (for example listing ai platform 
 jobs), and I was able to create the model via the console without issue. 
 
-#### Add model prediction package to model as a version
+### Add model prediction package to model as a version - requires gcloud beta
 
+#### Command for submitting model version
+```
+gcloud beta ai-platform versions create <version>
+    --model <model_name>
+    --runtime-version 1.15
+    --python-version 3.7
+    --origin gs://<path_to_model_artifacts>
+    --package-uris gs://<path_to_packaged_cd>/<name_of_package.tar.gz>
+    --prediction-class <modeling.preditor.predictor.Predictor>
+```
+
+Ran into multiple issues when doing this, the main one being that errors are 
+very vague. No information is given on exactly what part of the code isn't 
+working, just a general "model" error. For example, I received the following
+generic error:
+
+```
+Create Version failed. Bad model detected with error:  "Failed to load model: 
+Unexpected error when loading the model: Support for generic buffers has not 
+been implemented. (Error code: 0)"
+```
+
+It turns out that it was unable to load hdf files even though the tables 
+requirement is included in the setup.py, and that I was able to create hdf files
+in AI Platform Jobs and AI Platform Notebooks. My best guess is this is 
+versioning discrepancies in AI Platform (similar to my jobs issue with AI 
+Platform runtime 1.14 described above). However, the lack of error information 
+passed to users makes debugging exceptionally hard. Solution here was to pickle
+dataframes rather than utilizing hdf files, but took a lot of guessing to find 
+the eventual issue. 
 
 ### Testing AI Platform Predict
 For simplicity and not duplicating code, I recommend having one package for 
