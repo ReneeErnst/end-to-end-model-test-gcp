@@ -1,3 +1,4 @@
+"""Script to get predictions"""
 import googleapiclient.discovery
 
 
@@ -10,7 +11,9 @@ def predict_json(project, model, instances, version=None):
 
     response = service.projects().predict(
         name=name,
-        body={'instances': instances}
+        body={'instances': [
+
+        ]}
     ).execute()
 
     if 'error' in response:

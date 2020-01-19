@@ -60,7 +60,11 @@ class Predictor:
 
         estimate = self.model.predict(df[features].values)
 
-        return estimate
+        result = {
+            'prediction': float(estimate)
+        }
+
+        return result
 
     @classmethod
     def from_path(cls, model_dir):
