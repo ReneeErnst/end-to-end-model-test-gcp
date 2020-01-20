@@ -6,7 +6,7 @@ from google.cloud import storage
 def category_columns(
         df: pd.DataFrame,
         cat_columns: list
-) -> pd.DataFrame:
+) -> tuple:
     """
     Create new pandas factorized columns for list of category columns provided.
     New columns created end in _enc. Drop original columns except for those in
@@ -14,7 +14,7 @@ def category_columns(
 
     :param df: Pandas Dataframe to perform operation on
     :param cat_columns: List of columns to convert to category
-    :return: df_out: Dataframe with cleaned up data
+    :return: df_out: tuple of Dataframes with cleaned up data
     """
 
     df_out = df.copy()
@@ -35,7 +35,14 @@ def category_columns(
 
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
-    """Uploads a file to the bucket."""
+    """
+    Uploads files to specified bucket
+    :param bucket_name: Name of GCP Storage bucket
+    :param source_file_name: Name of file at source location
+    :param destination_blob_name: What the name of the file should be at
+    destination
+    :return: True to indicate function completed
+    """
     storage_client = storage.Client()
     bucket = storage_client.get_bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)

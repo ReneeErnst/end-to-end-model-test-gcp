@@ -3,12 +3,20 @@
 Testing using GCP AI platform for entire modeling process - Initial 
 testing/development of model to real time model predictions. 
 
-This documentation is based on the current state of AI Platform as of early 
-Jan 2020. Note that as of this date, much of AI Platform, including Notebooks
-and Jobs is in Beta. AI Platform Notebooks is running version 1.14 of AI 
-Platform but AI Platform Jobs provides the option of running different versions, 
-including the newer 1.15 version. 1.15 includes Python 3.7, with 1.14 only 
-including 1.14. 
+This documentation is based on the current state of AI Platform as of 
+January 2020. Note that as of this date, much of AI Platform, including 
+Notebooks, Jobs and Custom Prediction routines, is in Beta. AI Platform 
+Notebooks is running version 1.14 of AI Platform but other components of AI 
+Platform Jobs provide the option of running different versions, including the 
+newer 1.15 runtime version. 1.15 includes Python 3.7, with 1.14's latest 
+included version of Python being 3.5. 
+
+General word of caution. As of today, I have found discrepancies in the package 
+versions included in various components of AI Platform, even for the same 
+runtime version. For example, the google cloud python packages are different 
+versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when building
+flows that depend on different components. Hopefully these types of 
+discrepancies will be solved before GA. 
 
 ## Creating model code in AI Platform Notebooks: Development/Testing
 
@@ -16,15 +24,42 @@ including 1.14.
 Created a basic forecasting project using the public Iowa Liquor Sales dataset. 
 See forecasting_training_test.ipynb for the Jupyter Notebook. 
 
-Created code for pulling the data via Big Query, doing basic EDA and data 
-manipulation in order to make running a Random Forest Regression predicting 
-liquor sales possible. Model quality has not been assessed as this test is for 
-testing workflow rather than creating a usable model.
+Includes code for pulling the data via Big Query, doing basic EDA and data 
+manipulation and a basic a Random Forest Regression predicting liquor sales 
+using the publicly available Iowa Liquor Sales dataset. Model quality has not 
+been assessed as the code and documentation included here is focused on testing 
+AI Platform services and workflows, rather than creating a usable model.
 
+#### Set Environment variables in AI Platform Notebook 
+In some cases you will want variables that you do not want in your 
+code/committed to git. For example, bucket names, project names, or other bits 
+that your org may prefer to not be in your code. The easiest way to do this is 
+put the info in a file that is not tracked in git and get the info from that 
+file as needed. This is appropriate for info you are fine having available to 
+others you are working with, but don't want explicitly in your code. Do not 
+use this for passwords. 
+
+**Example:** Create BUCKET_NAME variable
+While in the top folder of your AI Platform Notebook (above folder for repo) run 
+the following command to create text file that contains the name of your bucket:
+```
+echo <bucket_name> > bucket.txt
+```
+
+In your notebook code, create a variable with your bucket name:
+```python
+import os
+
+bucket_path = os.path.expanduser('~/bucket.txt')
+with open(bucket_path) as f:
+    BUCKET_NAME = f.read().strip()
+```
+
+#### Results Summary
 Coding and running the model in Jupyter Lab was uneventful. Notebook in this 
 repo should meet the needs of basic documentation. Note that because AI Platform
 Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
-f-strings or type hinting)
+f-strings or type hinting). 
 
 ### Jupyter via remote execution into AI Platform Notebook Instance
 Prerequisites: 
@@ -38,37 +73,79 @@ Helpful Links:
 https://cloud.google.com/ai-platform/notebooks/docs/ssh-access
 
 Instructions:
-1. On the AI Platform Notebook Instance you created,
-open your VM Instance details.
-On the dropdown for Remote access, select "view gcloud command"
-Your Project-Id, Zone, and Instance Name all need to be in quotations.
-Example: 
-```
-gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
-```
+1. On the AI Platform Notebook Instance you created, open your VM Instance 
+   details. On the dropdown for Remote access, select "view gcloud command"
 
-2. Open your local Google Cloud SDK shell and run the gcloud command
-for connecting.
-Tip- you will want to include a port at this time. Note that the default
-port for Jupyter Notebook is 8888
+2. Open your local Google Cloud SDK shell and run the gcloud command for 
+   connecting via SSH to your running instance. Tip- you will want to include a 
+   port at this time. Note that the default port for Jupyter Notebook is 8888
+   
 Example:
 ```
 gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
 -- -L 8888:localhost:8888
 ```
-3. Once you run the gcloud command, a PuTTY instance will launch and
-will connect to your AI Platform Notebook instance. Launch Jupyter
-by entering "jupyter-notebook" in your PuTTY instance. 
+
+3. Once you run the gcloud command, a PuTTY instance will launch and will 
+   connect to your AI Platform Notebook instance. Launch Jupyter by entering 
+   "jupyter-notebook" in your PuTTY instance. 
 
 4. Copy the token shown in your PuTTY instance. 
 
 5. Enter http://127.0.0.1:8888/ in your browser and paste the token 
-you copied in step #4
+   you copied in step #4
 
 Congratulations- You are up and running!
 
 ### Cauldron via remote execution into AI Platform Notebook Instance
-Coming Soon - Our team at GMI uses Cauldron Notebooks in addition to Juptyer. 
+Prerequisites:                                                             
+1. You must have Python 3.5+ with cauldron-notebook python package installed                       
+2. If using a windows machine, you must have PuTTY installed.              
+   If using a Mac, you should have a built-in SSH client, so PuTTY is not  
+   needed.                                                                 
+3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install, 
+   including the beta packages
+                                                                           
+Helpful Links:                                                             
+https://cloud.google.com/ai-platform/notebooks/docs/ssh-access             
+                                                                           
+Instructions:                                                              
+1. On the AI Platform Notebook Instance you created, open your VM Instance 
+   details. On the dropdown for Remote access, select "view gcloud command" 
+
+2. Run the command that you get in Step 1 in your command line tool of choice
+
+3. You will now have a putty window open. From here you are running commands 
+   that will execute on the remote VM that is your notebook instance. Note that
+   the default version is python 2.7. To run anything with python 3,  you need 
+   to specify that. 
+   
+4. If you haven't already, install cauldron-notebook:
+```python
+sudo pip3 install cauldron-notebook
+```
+
+Given how AI Platform is currently set up, you need to sudo install Cauldron 
+as default permissions don't properly install the package. 
+
+Hint: You can check to see if it is already installed using the following 
+command:
+```python
+pip3 list
+```
+
+5. Start Cauldron Kernel in PuTTY instance with the following command:
+```
+cauldron kernel --port=5010
+```
+
+6. In your command line tool of choice, launch cauldron on your machine 
+connecting to that now open port:
+```
+cauldron ui --connect=127.0.0.1:5010
+```
+
+7. Cauldron will now open in your default browser and you are ready to go!
 
 ## Jobs in AI Platform 
 
@@ -89,19 +166,26 @@ on AI Platform. Make sure to run this from the location of your repo. The
 command structure for this is:
 
 ##### Command for local training job:
-Note: Locations reflect structure in this repo, update for your use as 
-appropriate. In this case the model output will get saved to the trainer folder.
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
+Locations reflect structure in this repo, update for your use as 
+appropriate. In this case the model output will get saved to the main 
+directory/repo folder.
+
+Passing in user args for bucket and run location. Adding the bucket env allows 
+keeping that info out of the code and the run location allows having the code 
+run differently depending on if doing this local job or running in AI Platform. 
+
 ``` 
 gcloud ai-platform local train  
   --package-path trainer 
   --module-name trainer.model
   --job-dir local-training-output
+  --
+  --bucket=<bucket_name>
+  --run_locatin=local
 ```
- 
-Note: There are a few lines in the model.py that you need to toggle/change 
-when running locally vs the job on AI Platform. When running locally you need 
-to point to your credentials file and should adjust the query to pull fewer 
-records. 
  
 #### Results summary for running job locally
 This code ran as expected locally
@@ -113,15 +197,20 @@ records and that you are using the client code that is not dependent on the
 local credentials file.
   
 ##### Command to run Job on AI Platform (final version after testing):
-Note: Locations reflect structure in this repo, update for your use as 
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
+Locations reflect structure in this repo, update for your use as 
 appropriate. 
 ```
 gcloud ai-platform jobs submit training <job_name> 
-  --package-path trainer
-  --module-name trainer.model 
+  --package-path modeling
+  --module-name modeling.trainer.model 
   --staging-bucket gs://<your_bucket>
   --python-version 3.7 
   --runtime-version 1.15
+  --
+  --bucket=<bucket_name>
 ```
 
 ##### Tests and Results for Running Job on AI Platform
@@ -194,5 +283,106 @@ Coming Soon
 A more complex job for model training. Can be used during model development. 
 Includes hyperparamater tuning and measuring model quality when training. 
 
-## Model Serving in AI Platform
-Coming Soon
+## Model Deployment in AI Platform
+Helpful Links:
+https://cloud.google.com/ml-engine/docs/deploying-models
+https://cloud.google.com/ml-engine/docs/custom-prediction-routines
+
+Helpful note from Google (make sure to do this to avoid overwriting files):
+When you create subsequent versions of your model, organize them by placing each
+one into its own separate directory within your Cloud Storage bucket.
+
+Note that if you used the code in this repo, your model object and supporting 
+files are already in a bucket and ready for deployment. 
+
+### Testing with local predictions
+Unfortuantely, at this time you can't test locally if using custom prediction 
+routines. For now we will skip documentation for testing locally. 
+
+### Creation of predict package
+As part of setting up your prediction package, you must create a Predictor class
+implements the instance shown under the Create Your Predictor section here:
+https://cloud.google.com/ml-engine/docs/custom-prediction-routines
+
+It is very important to closely follow the formatting of this as AI Platform 
+strictly expects this format. The predictor module in this repo shows an example
+of working code. 
+
+After creating the predictor code, package it and then store it in GCS. Note 
+that Google recommends using a designated staging directory if iterating and 
+creating multiple versions of the custom prediction routine and version can be 
+used in the setup.py for this. This is setup within the setup.py in this repo.
+
+#### Command to package up code:
+```python
+python setup.py sdist --formats=gztar
+```
+
+This will create your packaged model in a folder called dist in your repo. Now 
+you need to transfer this package to GCS.
+
+#### Command for transferring package to GCS:
+```
+gsutil cp dist/<package-name>.tar.gz gs://<your-bucket>/<path-to-staging-dir>/
+```
+
+#### Create location for model versions
+After creating the package and transferring it to your storage bucket, you will
+wan't to create a model in AI Platform Models before adding your package as a 
+version. The documentation is a bit unclear on this point. Creating a model by 
+itself does not then host your model. You first need to create the "model" and 
+then add your package as a version. You first want to create model using the 
+following command:
+```
+gcloud ai-platform models create <model-name> --regions <region>
+```
+
+Note: I received an odd error when first attempting this via the gcloud command
+rather than the console. The error indicated that I do not have permission to 
+access my project. This error is not a clear indicator of the true issue given
+that I can access the project in other ways (for example listing ai platform 
+jobs), and I was able to create the model via the console without issue. 
+
+### Add model prediction package to model as a version - requires gcloud beta
+
+#### Command for submitting model version
+```
+gcloud beta ai-platform versions create <version>
+    --model <model_name>
+    --runtime-version 1.15
+    --python-version 3.7
+    --origin gs://<path_to_model_artifacts>
+    --package-uris gs://<path_to_packaged_cd>/<name_of_package.tar.gz>
+    --prediction-class <modeling.preditor.predictor.Predictor>
+```
+
+Ran into multiple issues when doing this, the main one being that errors are 
+very vague. No information is given on exactly what part of the code isn't 
+working, just a general "model" error. For example, I received the following
+generic error:
+
+```
+Create Version failed. Bad model detected with error:  "Failed to load model: 
+Unexpected error when loading the model: Support for generic buffers has not 
+been implemented. (Error code: 0)"
+```
+
+It turns out that it was unable to load hdf files even though the tables 
+requirement is included in the setup.py, and that I was able to create hdf files
+in AI Platform Jobs and AI Platform Notebooks. My best guess is this is 
+versioning discrepancies in AI Platform (similar to my jobs issue with AI 
+Platform runtime 1.14 described above). However, the lack of error information 
+passed to users makes debugging exceptionally hard. Solution here was to pickle
+dataframes rather than utilizing hdf files, but took a lot of guessing to find 
+the eventual issue. 
+
+### Testing AI Platform Predict
+For simplicity and not duplicating code, I recommend having one package for 
+model training and model deployment. The code structure in this repo allows that
+and as a result only requires a single setup.py. 
+
+#### Command to run AI Platform Prediction Deployment
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines. 
+
+
