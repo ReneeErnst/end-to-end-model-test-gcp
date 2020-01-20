@@ -3,12 +3,20 @@
 Testing using GCP AI platform for entire modeling process - Initial 
 testing/development of model to real time model predictions. 
 
-This documentation is based on the current state of AI Platform as of early 
-Jan 2020. Note that as of this date, much of AI Platform, including Notebooks
-and Jobs is in Beta. AI Platform Notebooks is running version 1.14 of AI 
-Platform but AI Platform Jobs provides the option of running different versions, 
-including the newer 1.15 version. 1.15 includes Python 3.7, with 1.14 only 
-including 1.14. 
+This documentation is based on the current state of AI Platform as of 
+January 2020. Note that as of this date, much of AI Platform, including 
+Notebooks, Jobs and Custom Prediction routines, is in Beta. AI Platform 
+Notebooks is running version 1.14 of AI Platform but other components of AI 
+Platform Jobs provide the option of running different versions, including the 
+newer 1.15 runtime version. 1.15 includes Python 3.7, with 1.14's latest 
+included version of Python being 3.5. 
+
+General word of caution. As of today, I have found discrepancies in the package 
+versions included in various components of AI Platform, even for the same 
+runtime version. For example, the google cloud python packages are different 
+versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when building
+flows that depend on different components. Hopefully these types of 
+discrepancies will be solved before GA. 
 
 ## Creating model code in AI Platform Notebooks: Development/Testing
 
@@ -16,16 +24,20 @@ including 1.14.
 Created a basic forecasting project using the public Iowa Liquor Sales dataset. 
 See forecasting_training_test.ipynb for the Jupyter Notebook. 
 
-Created code for pulling the data via Big Query, doing basic EDA and data 
-manipulation in order to make running a Random Forest Regression predicting 
-liquor sales possible. Model quality has not been assessed as this test is for 
-testing workflow rather than creating a usable model.
+Includes code for pulling the data via Big Query, doing basic EDA and data 
+manipulation and a basic a Random Forest Regression predicting liquor sales 
+using the publicly available Iowa Liquor Sales dataset. Model quality has not 
+been assessed as the code and documentation included here is focused on testing 
+AI Platform services and workflows, rather than creating a usable model.
 
 #### Set Environment variables in AI Platform Notebook 
 In some cases you will want variables that you do not want in your 
 code/committed to git. For example, bucket names, project names, or other bits 
 that your org may prefer to not be in your code. The easiest way to do this is 
-put the info in a file that is not tracked in git and call it. 
+put the info in a file that is not tracked in git and get the info from that 
+file as needed. This is appropriate for info you are fine having available to 
+others you are working with, but don't want explicitly in your code. Do not 
+use this for passwords. 
 
 **Example:** Create BUCKET_NAME variable
 While in the top folder of your AI Platform Notebook (above folder for repo) run 
@@ -47,7 +59,7 @@ with open(bucket_path) as f:
 Coding and running the model in Jupyter Lab was uneventful. Notebook in this 
 repo should meet the needs of basic documentation. Note that because AI Platform
 Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
-f-strings or type hinting)
+f-strings or type hinting). 
 
 ### Jupyter via remote execution into AI Platform Notebook Instance
 Prerequisites: 
@@ -61,37 +73,79 @@ Helpful Links:
 https://cloud.google.com/ai-platform/notebooks/docs/ssh-access
 
 Instructions:
-1. On the AI Platform Notebook Instance you created,
-open your VM Instance details.
-On the dropdown for Remote access, select "view gcloud command"
-Your Project-Id, Zone, and Instance Name all need to be in quotations.
-Example: 
-```
-gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
-```
+1. On the AI Platform Notebook Instance you created, open your VM Instance 
+   details. On the dropdown for Remote access, select "view gcloud command"
 
-2. Open your local Google Cloud SDK shell and run the gcloud command
-for connecting.
-Tip- you will want to include a port at this time. Note that the default
-port for Jupyter Notebook is 8888
+2. Open your local Google Cloud SDK shell and run the gcloud command for 
+   connecting via SSH to your running instance. Tip- you will want to include a 
+   port at this time. Note that the default port for Jupyter Notebook is 8888
+   
 Example:
 ```
 gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
 -- -L 8888:localhost:8888
 ```
-3. Once you run the gcloud command, a PuTTY instance will launch and
-will connect to your AI Platform Notebook instance. Launch Jupyter
-by entering "jupyter-notebook" in your PuTTY instance. 
+
+3. Once you run the gcloud command, a PuTTY instance will launch and will 
+   connect to your AI Platform Notebook instance. Launch Jupyter by entering 
+   "jupyter-notebook" in your PuTTY instance. 
 
 4. Copy the token shown in your PuTTY instance. 
 
 5. Enter http://127.0.0.1:8888/ in your browser and paste the token 
-you copied in step #4
+   you copied in step #4
 
 Congratulations- You are up and running!
 
 ### Cauldron via remote execution into AI Platform Notebook Instance
-Coming Soon - Our team at GMI uses Cauldron Notebooks in addition to Juptyer. 
+Prerequisites:                                                             
+1. You must have Python 3.5+ with cauldron-notebook python package installed                       
+2. If using a windows machine, you must have PuTTY installed.              
+   If using a Mac, you should have a built-in SSH client, so PuTTY is not  
+   needed.                                                                 
+3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install, 
+   including the beta packages
+                                                                           
+Helpful Links:                                                             
+https://cloud.google.com/ai-platform/notebooks/docs/ssh-access             
+                                                                           
+Instructions:                                                              
+1. On the AI Platform Notebook Instance you created, open your VM Instance 
+   details. On the dropdown for Remote access, select "view gcloud command" 
+
+2. Run the command that you get in Step 1 in your command line tool of choice
+
+3. You will now have a putty window open. From here you are running commands 
+   that will execute on the remote VM that is your notebook instance. Note that
+   the default version is python 2.7. To run anything with python 3,  you need 
+   to specify that. 
+   
+4. If you haven't already, install cauldron-notebook:
+```python
+sudo pip3 install cauldron-notebook
+```
+
+Given how AI Platform is currently set up, you need to sudo install Cauldron 
+as default permissions don't properly install the package. 
+
+Hint: You can check to see if it is already installed using the following 
+command:
+```python
+pip3 list
+```
+
+5. Start Cauldron Kernel in PuTTY instance with the following command:
+```
+cauldron kernel --port=5010
+```
+
+6. In your command line tool of choice, launch cauldron on your machine 
+connecting to that now open port:
+```
+cauldron ui --connect=127.0.0.1:5010
+```
+
+7. Cauldron will now open in your default browser and you are ready to go!
 
 ## Jobs in AI Platform 
 
