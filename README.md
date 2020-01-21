@@ -297,7 +297,7 @@ gcloud ai-platform local train
   --module-name modeling.trainer.model
   --job-dir local-training-output
   --
-  --run_locatin=local
+  --run_location=local
   --bucket=None
 ```
  
