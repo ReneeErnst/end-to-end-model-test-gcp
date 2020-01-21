@@ -80,11 +80,16 @@ Instructions:
    connecting via SSH to your running instance. Tip- you will want to include a 
    port at this time. Note that the default port for Jupyter Notebook is 8888
    
-Example:
-```
-gcloud compute --project <project-id> ssh --zone <zone-name> <instance-name>
--- -L 8888:localhost:8888
-```
+    Example:
+
+    ```
+    gcloud compute 
+      --project <project-id> 
+      ssh 
+      --zone <zone-name> 
+      <instance-name>
+      -- -L 8888:localhost:8888
+    ```
 
 3. Once you run the gcloud command, a PuTTY instance will launch and will 
    connect to your AI Platform Notebook instance. Launch Jupyter by entering 
@@ -121,29 +126,29 @@ Instructions:
    to specify that. 
    
 4. If you haven't already, install cauldron-notebook:
-```python
-sudo pip3 install cauldron-notebook
-```
+    ```
+    sudo pip3 install cauldron-notebook
+    ```
 
-Given how AI Platform is currently set up, you need to sudo install Cauldron 
-as default permissions don't properly install the package. 
-
-Hint: You can check to see if it is already installed using the following 
-command:
-```python
-pip3 list
-```
+    Given how AI Platform is currently set up, you need to sudo install Cauldron 
+    as default permissions don't properly install the package. 
+    
+    Hint - You can check to see if it is already installed using the following 
+    command:
+    ```
+    pip3 list
+    ```
 
 5. Start Cauldron Kernel in PuTTY instance with the following command:
-```
-cauldron kernel --port=5010
-```
+    ```
+    cauldron kernel --port=5010
+    ```
 
 6. In your command line tool of choice, launch cauldron on your machine 
 connecting to that now open port:
-```
-cauldron ui --connect=127.0.0.1:5010
-```
+    ```
+    cauldron ui --connect=127.0.0.1:5010
+    ```
 
 7. Cauldron will now open in your default browser and you are ready to go!
 
@@ -162,74 +167,76 @@ https://www.jetbrains.com/help/pycharm/creating-a-remote-server-configuration.ht
 
 
 Instructions:
-1. On the AI Platform Notebook Instance you created,
-open your VM Instance details.
-On the dropdown for Remote access, select "SSH". 
-A linux terminal will pop-up in a new window.
+1. On the AI Platform Notebook Instance you created, open your VM Instance 
+   details. On the dropdown for Remote access, select "SSH". A linux terminal 
+   will pop-up in a new window.
 
-2. Follow the steps in the Managing SSH keys in metadata
-link above for creating a new SSH key.
-Example:
-- In the terminal, use the ssh-keygen command to generate a
-private SSH key file and a matching public SSH key file
-```
-ssh-keygen -t rsa -f ~/.ssh/[KEY_FILENAME] -C [USERNAME]
-```
-- You will have the option here to create a passphrase as an 
-additional layer of security
-- Restrict access to your private key so that only you can read it 
-and nobody can write to it
-```
-chmod 400 ~/.ssh/[KEY_FILENAME]
-```
+2. Follow the steps in the Managing SSH keys in metadata link above for creating
+   a new SSH key.
 
-3. Follow the steps in the Managing SSH keys in metadata
-link above for locating an SSH key.
-Locate and save your private key:
-- In the terminal, locate your private key
-```
-cd /home/[USERNAME]/.ssh
-```
-- Click on the settings in your terminal and select "Download File"
-- Enter the filepath to your private key and select "Download"
-```
-/home/[USERNAME]/.ssh/[KEY_FILENAME]
-```
-- Save your private key to your chosen destination
-- IMPORTANT TIP: For windows, you will need to open PuTTYgen and load your
-private key that you saved in the previous step. In PuTTYgen, 
-select "save private key" to your chosen destination. Be sure to enter your
-passphrase if you opted to create one.
-This process converts your private key into the format PuTTY and 
-other third-party tools needs to be able to read it
+    Example:
+    - In the terminal, use the ssh-keygen command to generate a private SSH key 
+       file and a matching public SSH key file:
+        ```
+        ssh-keygen -t rsa -f ~/.ssh/<KEY_FILENAME> -C <USERNAME>
+        ```
+    - You will have the option here to create a passphrase as an additional 
+      layer of security
+    - Restrict access to your private key so that only you can read it and 
+      nobody can write to it:
+        ```
+        chmod 400 ~/.ssh/<KEY_FILENAME>
+        ```
+
+3. Follow the steps in the Managing SSH keys in metadata link above for locating
+   an SSH key.
+
+    Locate and save your private key:
+    - In the terminal, locate your private key:
+        ```
+        cd /home/<USERNAME>/.ssh
+        ```
+    - Click on the settings in your terminal and select "Download File"
+    - Enter the filepath to your private key and select "Download":
+        ```
+        /home/<USERNAME>/.ssh/<KEY_FILENAME>
+        ```
+
+    - Save your private key to your chosen destination
+    - IMPORTANT TIP: For windows, you will need to open PuTTYgen and load your
+      private key that you saved in the previous step. In PuTTYgen, select 
+      "save private key" to your chosen destination. Be sure to enter your 
+      passphrase if you opted to create one. This process converts your private 
+      key into the format PuTTY and other third-party tools needs to be able to 
+      read it.
 
 4. Locate, view, save your public key:
-- Enter the filepath to your public key
-```
-cd /home/[USERNAME]/.ssh
-```
-- View and copy the entirety of the public key
-```
-cat [KEY_FILENAME].pub
-```
-- Navigate to your AI Platform Instance and select "Edit"
-- Scroll to find SSH keys and select "Show and Edit"
-- Select "Add Item" and paste your public key in the box shown
-- Scroll down the page and select "Save"
+    - Enter the filepath to your public key
+    ```
+    cd /home/[USERNAME]/.ssh
+    ```
+    - View and copy the entirety of the public key
+    ```
+    cat [KEY_FILENAME].pub
+    ```
+    - Navigate to your AI Platform Instance and select "Edit"
+    - Scroll to find SSH keys and select "Show and Edit"
+    - Select "Add Item" and paste your public key in the box shown
+    - Scroll down the page and select "Save"
 
 5. Use your private key to connect PyCharm to your AI Platform Notebook instance
-- Open PyCharm Professional Edition and navigate to
-"File" --> "Settings" --> "Deployment"
-- Select "+" and "SFTP"
-- Enter your Instance External IP in the Host Section
-- IMPORTANT TIP: Your Instance External IP might be ephemeral, so 
-you may have to enter a new External IP each time you connect with PyCharm
-- Enter your username in the User Name section
-- Select authentication type as "Key Pair OpenSSH or PuTTY"
-- Upload your private key in the private key path
-- Enter your passphrase if you saved your private key with one
-- Select "Test Connection" to make sure you are connected 
-- Select "Ok"
+    - Open PyCharm Professional Edition and navigate to "File" --> "Settings" 
+      --> "Deployment"
+    - Select "+" and "SFTP"
+    - Enter your Instance External IP in the Host Section
+    - IMPORTANT TIP: Your Instance External IP might be ephemeral, so you may 
+      have to enter a new External IP each time you connect with PyCharm
+    - Enter your username in the User Name section
+    - Select authentication type as "Key Pair OpenSSH or PuTTY"
+    - Upload your private key in the private key path
+    - Enter your passphrase if you saved your private key with one
+    - Select "Test Connection" to make sure you are connected 
+    - Select "Ok"
 
 6. You are now connected! 
 
@@ -237,7 +244,9 @@ To browse the files you may have saved in
 your AI Platform Notebook Instance in PyCharm, navigate to
 "Tools" --> "Deployment" --> "Browse Remote Host"
 
-The file directory of your instance should appear on the right side of your screen
+The file directory of your instance should appear on the right side of your 
+screen
+
 ## Jobs in AI Platform 
 
 ### Simple training job using Jobs in AI Platform
@@ -258,24 +267,38 @@ command structure for this is:
 
 ##### Command for local training job:
 **Note:** See deploy.py code for a python script that simplifies the process of  
-running the gcloud commands for deploying jobs and prediction routines. 
+running the gcloud commands for deploying jobs and prediction routines. See the 
+local_action for running local training job. If using this you can simply run 
+`python deploy.py local_train`
 
-Locations reflect structure in this repo, update for your use as 
-appropriate. In this case the model output will get saved to the main 
-directory/repo folder.
+When running locally, make sure that you have your 
+GOOGLE_APPLICATION_CREDENTIALS path setup. See instructions here: 
+https://cloud.google.com/docs/authentication/getting-started
+
+Locations reflect structure in this repo, update for your use as appropriate. 
+In this case the model output will get saved to the main directory/repo folder.
 
 Passing in user args for bucket and run location. Adding the bucket env allows 
 keeping that info out of the code and the run location allows having the code 
 run differently depending on if doing this local job or running in AI Platform. 
 
+Make sure you cd into the appropriate folder on your machine for this to run. 
+In this case I'm running this from end-to-end-model-test-gcp directory.
+
+Anything after the line that just has -- are user arguments required in the 
+python code specific to the model.py code in the trainer for this repo. In order
+to make the training code work for both local training and submitting to AI 
+Platform, we need to have the user defined bucket parameter here, but it can be 
+set to None when running locally.
+
 ``` 
 gcloud ai-platform local train  
-  --package-path trainer 
-  --module-name trainer.model
+  --package-path modeling.trainer 
+  --module-name modeling.trainer.model
   --job-dir local-training-output
   --
-  --bucket=<bucket_name>
   --run_locatin=local
+  --bucket=None
 ```
  
 #### Results summary for running job locally

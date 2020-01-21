@@ -13,26 +13,23 @@ parser = argparse.ArgumentParser()
 
 # --job-dir isn't needed by us, but it gets passed so we need to have this here
 parser.add_argument('--job-dir')
-# passed in name of bucket
-parser.add_argument('--bucket')
+
 # passed in info on if running locally
 parser.add_argument('--run_location')
+
+# passed in name of bucket
+parser.add_argument('--bucket')
 
 args = parser.parse_args(sys.argv[1:])
 print(vars(args))
 
-BUCKET_NAME = args.bucket
 RUN_LOCATION = args.run_location
+BUCKET_NAME = args.bucket
 
 # Get the data
 if RUN_LOCATION == 'local':
-    client = bigquery.Client.from_service_account_json(
-        'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json',
-        location='US'
-    )
     num_records = 100
 else:
-    client = bigquery.Client()
     num_records = 100000
 
 # noinspection SqlNoDataSourceInspection
@@ -47,6 +44,8 @@ query = f"""
       FROM `bigquery-public-data.iowa_liquor_sales.sales`
      LIMIT {num_records}
 """
+
+client = bigquery.Client()
 
 query_job = client.query(query)
 
@@ -79,19 +78,6 @@ df_cat = df_cat.round({'sale_dollars': 2})
 # Save categorical mapping file
 df_mapping.to_pickle('categorical_mapping.pkl')
 
-# Save mapping to storage
-if RUN_LOCATION == 'local':
-    storage_client = storage.Client.from_service_account_json(
-        'C:/Users/g557202/data-science-sandbox-d3c168-94e1fa28cf2f.json'
-    )
-else:
-    storage_client = storage.Client()
-
-bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob(
-    'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.pkl')
-blob.upload_from_filename('categorical_mapping.pkl')
-
 # Set variable we are predicting for and predictors
 y_col = 'sale_dollars'
 x_cols = [
@@ -119,6 +105,19 @@ pickle.dump(
     open('model.pkl', 'wb')
 )
 
-bucket = storage_client.bucket(BUCKET_NAME)
-blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model.pkl')
-blob.upload_from_filename('model.pkl')
+# Save files to GCS
+if RUN_LOCATION == 'local':
+    print('Running Locally - No need to save out to GCS')
+else:
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(BUCKET_NAME)
+
+    # Save mapping file
+    blob = bucket.blob(
+        'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.pkl')
+    blob.upload_from_filename('categorical_mapping.pkl')
+
+    # Save model file
+    blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model.pkl')
+    blob.upload_from_filename('model.pkl')

@@ -16,6 +16,10 @@ def parse():
     )
     sub_parsers = parser.add_subparsers(dest='action')
 
+    # Required even though this deploy functionality doesn't need arguments
+    # passed in
+    local_train_parser = sub_parsers.add_parser('local_train')
+
     train_parser = sub_parsers.add_parser('train')
     train_parser.add_argument(
         '--bucket',
@@ -69,7 +73,33 @@ def parse():
     return parser.parse_args()
 
 
+def deploy_local_train(args: argparse.Namespace):
+    """
+    Run command to test training job locally
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
+    command = [
+        'powershell.exe',
+        'gcloud', 'ai-platform', 'local', 'train',
+        '--package-path', 'modeling',
+        '--module-name', 'modeling.trainer.model',
+        '--job-dir', 'local-training-output',
+        '--',
+        '--run_location=local',
+        '--bucket=None'
+    ]
+    result = subprocess.run(command)
+
+    return result.check_returncode()
+
+
 def deploy_trainer(args: argparse.Namespace):
+    """
+    Run command to run training job in AI Platform
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
     command = [
         'powershell.exe',
         'gcloud', 'ai-platform',
@@ -90,6 +120,11 @@ def deploy_trainer(args: argparse.Namespace):
 
 
 def deploy_predictor(args: argparse.Namespace):
+    """
+    Run command to create a model version in AI Platform
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
     command = [
         'powershell.exe',
         'gcloud', 'beta', 'ai-platform',
@@ -109,7 +144,9 @@ def deploy_predictor(args: argparse.Namespace):
 
 def main():
     args = parse()
-    if args.action == 'train':
+    if args.action == 'local_train':
+        return deploy_local_train(args)
+    elif args.action == 'train':
         return deploy_trainer(args)
     elif args.action == 'predict':
         return deploy_predictor(args)
