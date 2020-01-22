@@ -5,6 +5,10 @@ import textwrap
 
 
 def parse():
+    """
+    Arguments to be passed in the gcloud commands
+    :return: parser for needed arguments
+    """
     parser = argparse.ArgumentParser(
         prog='deploy',
         description=textwrap.dedent(
@@ -18,6 +22,7 @@ def parse():
 
     # Required even though this deploy functionality doesn't need arguments
     # passed in
+    # noinspection PyUnusedLocal
     local_train_parser = sub_parsers.add_parser('local_train')
 
     train_parser = sub_parsers.add_parser('train')
@@ -78,6 +83,7 @@ def parse():
     return parser.parse_args()
 
 
+# noinspection PyUnusedLocal
 def deploy_local_train(args: argparse.Namespace):
     """
     Run command to test training job locally
@@ -148,6 +154,10 @@ def deploy_predictor(args: argparse.Namespace):
 
 
 def main():
+    """
+    Run associated function based on action input
+    :return: run action
+    """
     args = parse()
     if args.action == 'local_train':
         return deploy_local_train(args)
