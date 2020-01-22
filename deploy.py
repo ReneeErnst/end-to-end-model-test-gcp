@@ -24,7 +24,12 @@ def parse():
     train_parser.add_argument(
         '--bucket',
         required=True,
-        help='Specify the storage bucket for staging package and model files'
+        help=textwrap.dedent(
+            """
+            Specify the storage bucket for staging package and outputting
+            model files
+            """
+        )
     )
     train_parser.add_argument(
         '--name',
