@@ -1,33 +1,3 @@
-[Testing End-to-End AI Platform Workflow in GCP](#testing-end-to-end-ai-platform-workflow-in-gcp)
-  * [Creating model code in AI Platform Notebooks: Development/Testing](#creating-model-code-in-ai-platform-notebooks--development-testing)
-    + [Jupyter Lab in AI Platform](#jupyter-lab-in-ai-platform)
-      - [Set Environment variables in AI Platform Notebook](#set-environment-variables-in-ai-platform-notebook)
-      - [Results Summary](#results-summary)
-    + [Jupyter via remote execution into AI Platform Notebook Instance](#jupyter-via-remote-execution-into-ai-platform-notebook-instance)
-    + [Cauldron via remote execution into AI Platform Notebook Instance](#cauldron-via-remote-execution-into-ai-platform-notebook-instance)
-    + [PyCharm via remote execution into AI Platform Notebook Instance](#pycharm-via-remote-execution-into-ai-platform-notebook-instance)
-  * [Jobs in AI Platform](#jobs-in-ai-platform)
-    + [Simple training job using Jobs in AI Platform](#simple-training-job-using-jobs-in-ai-platform)
-      - [Running the job locally](#running-the-job-locally)
-        * [Command for local training job:](#command-for-local-training-job-)
-      - [Results summary for running job locally](#results-summary-for-running-job-locally)
-      - [Submit Training job to run in AI Platform](#submit-training-job-to-run-in-ai-platform)
-        * [Command to run Job on AI Platform (final version after testing):](#command-to-run-job-on-ai-platform--final-version-after-testing--)
-        * [Tests and Results for Running Job on AI Platform](#tests-and-results-for-running-job-on-ai-platform)
-        * [Results summary for running AI Platform Job](#results-summary-for-running-ai-platform-job)
-  * [Batch jobs using Jobs in AI Platform](#batch-jobs-using-jobs-in-ai-platform)
-  * [Model Development Using Jobs in AI Platform (including hyperparameter tuning)](#model-development-using-jobs-in-ai-platform--including-hyperparameter-tuning-)
-  * [Model Deployment in AI Platform](#model-deployment-in-ai-platform)
-    + [Testing with local predictions](#testing-with-local-predictions)
-    + [Creation of predict package](#creation-of-predict-package)
-      - [Command to package up code:](#command-to-package-up-code-)
-      - [Command for transferring package to GCS:](#command-for-transferring-package-to-gcs-)
-      - [Create location for model versions](#create-location-for-model-versions)
-    + [Add model prediction package to model as a version - requires gcloud beta](#add-model-prediction-package-to-model-as-a-version---requires-gcloud-beta)
-      - [Command for submitting model version](#command-for-submitting-model-version)
-    + [Testing AI Platform Predict](#testing-ai-platform-predict)
-      - [Command to run AI Platform Prediction Deployment](#command-to-run-ai-platform-prediction-deployment)
-
 # Testing End-to-End AI Platform Workflow in GCP
 
 Testing using GCP AI platform for entire modeling process - Initial 
@@ -48,7 +18,35 @@ versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when building
 flows that depend on different components. Hopefully these types of 
 discrepancies will be solved before GA. 
 
-## Creating model code in AI Platform Notebooks: Development/Testing
+# Table of Contents
+[AI Platform Notebooks: Development/Testing](#ai-platform-notebooks-developmenttesting)
+  * [Jupyter Lab in AI Platform](#jupyter-lab-in-ai-platform)
+    + [Environment variables in AI Platform Notebook](#environment-variables-in-ai-platform-notebook)
+    + [Results Summary](#results-summary)
+  * [Remote execution in AI Platform Notebook Instances](#remote-execution-in-ai-platform-notebook-instances)
+    + [Remote execution: Jupyter Notebooks](#remote-execution-jupyter-notebooks)
+    + [Remote Execution: Cauldron Notebooks](#remote-execution-cauldron-notebooks)
+    + [Remote Execution: PyCharm IDE](#remote-execution-pycharm-ide)
+
+[Training Jobs in AI Platform](#training-jobs-in-ai-platform)
+  * [Simple training job using Jobs in AI Platform](#simple-training-job-using-jobs-in-ai-platform)
+    + [Running the job locally](#running-the-job-locally)
+    + [Results summary for running job locally](#results-summary-for-running-job-locally)
+    + [Submit Training job to run in AI Platform](#submit-training-job-to-run-in-ai-platform)
+      - [Tests and Findings for Running Job on AI Platform](#tests-and-findings-running-job-on-ai-platform)
+    + [Results summary for running AI Platform Job](#results-summary-for-running-ai-platform-job)
+
+[Batch jobs using Jobs in AI Platform](#batch-jobs-using-jobs-in-ai-platform)
+
+[Model Development Using Jobs in AI Platform (including hyperparameter tuning)](#model-development-using-jobs-in-ai-platform--including-hyperparameter-tuning-)
+
+[Model Deployment in AI Platform](#model-deployment-in-ai-platform)
+  * [Testing with local predictions](#testing-with-local-predictions)
+  * [Creation of predict package](#creation-of-predict-package)
+  * [Add model prediction package to model as a version - requires gcloud beta](#add-model-prediction-package-to-model-as-a-version---requires-gcloud-beta)
+  * [Testing AI Platform Predict](#testing-ai-platform-predict)
+
+## AI Platform Notebooks: Development/Testing
 
 ### Jupyter Lab in AI Platform
 Created a basic forecasting project using the public Iowa Liquor Sales dataset. 
@@ -60,7 +58,7 @@ using the publicly available Iowa Liquor Sales dataset. Model quality has not
 been assessed as the code and documentation included here is focused on testing 
 AI Platform services and workflows, rather than creating a usable model.
 
-#### Set Environment variables in AI Platform Notebook 
+#### Environment variables in AI Platform Notebook 
 In some cases you will want variables that you do not want in your 
 code/committed to git. For example, bucket names, project names, or other bits 
 that your org may prefer to not be in your code. The easiest way to do this is 
@@ -91,7 +89,9 @@ repo should meet the needs of basic documentation. Note that because AI Platform
 Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
 f-strings or type hinting). 
 
-### Jupyter via remote execution into AI Platform Notebook Instance
+### Remote execution in AI Platform Notebook Instances
+
+#### Remote execution: Jupyter Notebooks
 Prerequisites: 
 1. You must have Python 3.5+ with Jupyter installed 
 2. If using a windows machine, you must have PuTTY installed. 
@@ -132,7 +132,7 @@ Instructions:
 
 Congratulations- You are up and running!
 
-### Cauldron via remote execution into AI Platform Notebook Instance
+#### Remote Execution: Cauldron Notebooks
 Prerequisites:                                                             
 1. You must have Python 3.5+ with cauldron-notebook python package installed                       
 2. If using a windows machine, you must have PuTTY installed.              
@@ -182,7 +182,7 @@ connecting to that now open port:
 
 7. Cauldron will now open in your default browser and you are ready to go!
 
-### PyCharm via remote execution into AI Platform Notebook Instance
+#### Remote execution: PyCharm IDE
 Prerequisites: 
 1. You must have Python 3.5+ installed
 2. You must have PyCharm installed with a PyCharm Professional Edition license 
@@ -277,7 +277,7 @@ your AI Platform Notebook Instance in PyCharm, navigate to
 The file directory of your instance should appear on the right side of your 
 screen
 
-## Jobs in AI Platform 
+## Training Jobs in AI Platform 
 
 ### Simple training job using Jobs in AI Platform
 For the purpose of testing Jobs in AI Platform I created code for running a 
@@ -362,7 +362,7 @@ gcloud ai-platform jobs submit training <job_name>
   --bucket=<bucket_name>
 ```
 
-##### Tests and Results for Running Job on AI Platform
+##### Tests and Findings Running Job on AI Platform
 **Test 1:** Run code as is using runtime-version 1.14 and Python 3.5 to match 
 what is ran in AI Platform Notebooks. In this test I attempted to use gcloud to 
 upload and package the code - this method does not require creating a setup.py 
@@ -463,7 +463,7 @@ creating multiple versions of the custom prediction routine and version can be
 used in the setup.py for this. This is setup within the setup.py in this repo.
 
 #### Command to package up code:
-```python
+```
 python setup.py sdist --formats=gztar
 ```
 
