@@ -36,14 +36,14 @@ discrepancies will be solved before GA.
       - [Tests and Findings for Running Job on AI Platform](#tests-and-findings-running-job-on-ai-platform)
     + [Results summary for running AI Platform Job](#results-summary-for-running-ai-platform-job)
 
-[Batch jobs using Jobs in AI Platform](#batch-jobs-using-jobs-in-ai-platform)
+[Model training and batch prediction using Jobs in AI Platform](#model-training-and-batch-prediction-using-jobs-in-ai-platform)
 
-[Model Development Using Jobs in AI Platform (including hyperparameter tuning)](#model-development-using-jobs-in-ai-platform--including-hyperparameter-tuning-)
+[Model Development Using Training Jobs in AI Platform](#model-development-using-training-jobs-in-ai-platform)
 
 [Model Deployment in AI Platform](#model-deployment-in-ai-platform)
   * [Testing with local predictions](#testing-with-local-predictions)
   * [Creation of predict package](#creation-of-predict-package)
-  * [Add model prediction package to model as a version - requires gcloud beta](#add-model-prediction-package-to-model-as-a-version---requires-gcloud-beta)
+  * [Add model prediction package to model as a version](#add-model-prediction-package-to-model-as-a-version)
   * [Testing AI Platform Predict](#testing-ai-platform-predict)
 
 ## AI Platform Notebooks: Development/Testing
@@ -75,7 +75,7 @@ echo <bucket_name> > bucket.txt
 ```
 
 In your notebook code, create a variable with your bucket name:
-```python
+```
 import os
 
 bucket_path = os.path.expanduser('~/bucket.txt')
@@ -425,12 +425,13 @@ Notebooks to Jobs (or likely model serving).
 General note - make sure to be thoughtful in where to save model objects to. 
 Team likely wants to add some automation to this process. 
 
-## Batch jobs using Jobs in AI Platform
-Coming Soon
+## Model training and batch prediction using Jobs in AI Platform
+Coming Soon: Scheduled model training and batch predictions in AI Platform
 
-## Model Development Using Jobs in AI Platform (including hyperparameter tuning)
-A more complex job for model training. Can be used during model development. 
-Includes hyperparamater tuning and measuring model quality when training. 
+## Model Development Using Training Jobs in AI Platform
+Coming Soon: Using Training jobs during model development for testing model 
+versions, including hyperparamater tuning and measuring model quality when 
+training. 
 
 ## Model Deployment in AI Platform
 Helpful Links:
@@ -492,7 +493,7 @@ access my project. This error is not a clear indicator of the true issue given
 that I can access the project in other ways (for example listing ai platform 
 jobs), and I was able to create the model via the console without issue. 
 
-### Add model prediction package to model as a version - requires gcloud beta
+### Add model prediction package to model as a version
 
 #### Command for submitting model version
 ```
@@ -516,22 +517,26 @@ Unexpected error when loading the model: Support for generic buffers has not
 been implemented. (Error code: 0)"
 ```
 
-It turns out that it was unable to load hdf files even though the tables 
-requirement is included in the setup.py, and that I was able to create hdf files
+I was unable to load hdf files even though the tables requirement is included as 
+a required package in the setup.py, and that I was able to create hdf files
 in AI Platform Jobs and AI Platform Notebooks. My best guess is this is 
 versioning discrepancies in AI Platform (similar to my jobs issue with AI 
 Platform runtime 1.14 described above). However, the lack of error information 
 passed to users makes debugging exceptionally hard. Solution here was to pickle
 dataframes rather than utilizing hdf files, but took a lot of guessing to find 
-the eventual issue. 
+the eventual issue. Further testing/debugging needed. 
 
 ### Testing AI Platform Predict
 For simplicity and not duplicating code, I recommend having one package for 
 model training and model deployment. The code structure in this repo allows that
 and as a result only requires a single setup.py. 
 
+Section In Progress
+
 #### Command to run AI Platform Prediction Deployment
 **Note:** See deploy.py code for a python script that simplifies the process of  
 running the gcloud commands for deploying jobs and prediction routines. 
+
+Section In Progress
 
 
