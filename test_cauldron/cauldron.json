@@ -1,0 +1,10 @@
+{
+  "author": "",
+  "name": "test_cauldron",
+  "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
+  "steps": [
+    "S01.py"
+  ],
+  "summary": "",
+  "title": "test_cauldron"
+}

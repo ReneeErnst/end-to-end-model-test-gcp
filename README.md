@@ -18,11 +18,11 @@ versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when building
 flows that depend on different components. Hopefully these types of 
 discrepancies will be solved before GA. 
 
-# Table of Contents
+## Table of Contents
 [AI Platform Notebooks: Development/Testing](#ai-platform-notebooks-developmenttesting)
   * [Jupyter Lab in AI Platform](#jupyter-lab-in-ai-platform)
     + [Environment variables in AI Platform Notebook](#environment-variables-in-ai-platform-notebook)
-    + [Results Summary](#results-summary)
+    + [Results Summary: AI Platform Notebooks/Jupyter Lab](#results-summary-ai-platform-notebooksjupyter-lab)
   * [Remote execution in AI Platform Notebook Instances](#remote-execution-in-ai-platform-notebook-instances)
     + [Remote execution: Jupyter Notebooks](#remote-execution-jupyter-notebooks)
     + [Remote Execution: Cauldron Notebooks](#remote-execution-cauldron-notebooks)
@@ -34,7 +34,7 @@ discrepancies will be solved before GA.
     + [Results summary for running job locally](#results-summary-for-running-job-locally)
     + [Submit Training job to run in AI Platform](#submit-training-job-to-run-in-ai-platform)
       - [Tests and Findings for Running Job on AI Platform](#tests-and-findings-running-job-on-ai-platform)
-    + [Results summary for running AI Platform Job](#results-summary-for-running-ai-platform-job)
+    + [Results Summary: Running AI Platform Jobs](#results-summary-running-ai-platform-jobs)
 
 [Model training and batch prediction using Jobs in AI Platform](#model-training-and-batch-prediction-using-jobs-in-ai-platform)
 
@@ -83,7 +83,7 @@ with open(bucket_path) as f:
     BUCKET_NAME = f.read().strip()
 ```
 
-#### Results Summary
+#### Results Summary: AI Platform Notebooks/Jupyter Lab
 Coding and running the model in Jupyter Lab was uneventful. Notebook in this 
 repo should meet the needs of basic documentation. Note that because AI Platform
 Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
@@ -113,12 +113,11 @@ Instructions:
     Example:
 
     ```
-    gcloud compute 
+    gcloud compute ssh <instance-name>
       --project <project-id> 
-      ssh 
       --zone <zone-name> 
-      <instance-name>
-      -- -L 8888:localhost:8888
+      -- 
+      -L 8888:localhost:8888
     ```
 
 3. Once you run the gcloud command, a PuTTY instance will launch and will 
@@ -139,21 +138,32 @@ Prerequisites:
    If using a Mac, you should have a built-in SSH client, so PuTTY is not  
    needed.                                                                 
 3. You must have Cloud SDK installed: https://cloud.google.com/sdk/install, 
-   including the beta packages
+   **including the beta packages**
                                                                            
 Helpful Links:                                                             
 https://cloud.google.com/ai-platform/notebooks/docs/ssh-access             
                                                                            
-Instructions:                                                              
-1. On the AI Platform Notebook Instance you created, open your VM Instance 
-   details. On the dropdown for Remote access, select "view gcloud command" 
+Instructions:  
+1. Start your AI Platform Notebook Instance
 
-2. Run the command that you get in Step 1 in your command line tool of choice
+2. In your command line tool of choice, run the following command to SSH into 
+   your notebook instance: 
+    ```
+    gcloud beta compute ssh <notebook_instance_name>
+      --project <project_name>
+      --zone <zone>
+      -- 
+      -L 5010:localhost:5010 
+    ```
+   
+   Hint: You can also get this command with all parameters already complete by 
+   opening your VM Instance details and in the dropdown for Remote access, 
+   select "view gcloud command" 
 
-3. You will now have a putty window open. From here you are running commands 
-   that will execute on the remote VM that is your notebook instance. Note that
-   the default version is python 2.7. To run anything with python 3,  you need 
-   to specify that. 
+3. You will now have a PuTTY window open. From here you are running commands 
+   that will execute in your AI Platform Notebook instance. Note that the 
+   default python version 2.7. To run anything with python 3, you need to 
+   specify that. For example, using python3 or pip3. 
    
 4. If you haven't already, install cauldron-notebook:
     ```
@@ -161,7 +171,7 @@ Instructions:
     ```
 
     Given how AI Platform is currently set up, you need to sudo install Cauldron 
-    as default permissions don't properly install the package. 
+    as default setup don't properly install the package. 
     
     Hint - You can check to see if it is already installed using the following 
     command:
@@ -175,7 +185,7 @@ Instructions:
     ```
 
 6. In your command line tool of choice, launch cauldron on your machine 
-connecting to that now open port:
+   connecting to that now open port:
     ```
     cauldron ui --connect=127.0.0.1:5010
     ```
@@ -186,14 +196,14 @@ connecting to that now open port:
 Prerequisites: 
 1. You must have Python 3.5+ installed
 2. You must have PyCharm installed with a PyCharm Professional Edition license 
-3. If using a windows machine, you must have PuTTY installed. 
-If using a Mac, you should have a built-in SSH client, so PuTTY is not needed.
+3. If using a windows machine, you must have PuTTY installed. If using a Mac, 
+   you should have a built-in SSH client, so PuTTY is not needed.
 
 Helpful Links: 
-- Managing SSH keys in metadata-
-https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys
-- Creating a Remote Server Configuration in PyCharm-
-https://www.jetbrains.com/help/pycharm/creating-a-remote-server-configuration.html
+    - Managing SSH keys in metadata:
+    https://cloud.google.com/compute/docs/instances/adding-removing-ssh-keys
+    - Creating a Remote Server Configuration in PyCharm:
+    https://www.jetbrains.com/help/pycharm/creating-a-remote-server-configuration.html
 
 
 Instructions:
@@ -243,11 +253,11 @@ Instructions:
 4. Locate, view, save your public key:
     - Enter the filepath to your public key
     ```
-    cd /home/[USERNAME]/.ssh
+    cd /home/<USERNAME>/.ssh
     ```
     - View and copy the entirety of the public key
     ```
-    cat [KEY_FILENAME].pub
+    cat <KEY_FILENAME>.pub
     ```
     - Navigate to your AI Platform Instance and select "Edit"
     - Scroll to find SSH keys and select "Show and Edit"
@@ -409,7 +419,7 @@ even though Notebooks is not yet running this version.
 
 **Results:** Successfully ran job 
 
-##### Results summary for running AI Platform Job
+##### Results Summary: Running AI Platform Jobs
 If needing to include any additional code/modules along with your code other 
 than the basic model script, need to create your own setup.py rather than having
 Google do that for you. Will reach out to Google Rep about possibility of having 
