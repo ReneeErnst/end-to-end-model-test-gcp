@@ -44,6 +44,7 @@ discrepancies will be solved before GA.
   * [Testing with local predictions](#testing-with-local-predictions)
   * [Creation of predict package](#creation-of-predict-package)
   * [Add model prediction package to model as a version](#add-model-prediction-package-to-model-as-a-version)
+  * [Get a model prediction](#get-a-model-prediction)
 
 ## AI Platform Notebooks: Development/Testing
 
@@ -551,7 +552,13 @@ one into its own separate directory within your Cloud Storage bucket.
 ### Get a model prediction
 
 #### Get a test prediction from withing the GCP Console:
-
+1. Within the GCP Console go to AI Platform Models
+2. Click on the name of the model you created
+3. Click on the name of the version you created
+4. Go to "Test & Use"
+5. Test a model input - See sample input in the tet_prediction.json file that 
+   should work if using the code in this repo. 
+   
 #### Python script for calling the model and getting predictions:
 The predict.py file includes code that will call your model and return a 
 prediction. The test_prediction.json file includes test input parameters for 
@@ -560,9 +567,7 @@ getting a sample model prediction.
 Run the following with the appropriate parameters set to get a prediction from 
 your deployed model: 
 
-ToDo: Test if the credentials parameter is not needed if local env variable is 
-set up. 
-
+ToDo have python use the env variable rather than needing credentials file
 ```
 python predict.py 
   --credentials <path_to_local_credientials_file> 
@@ -570,5 +575,3 @@ python predict.py
   --model <model-name>
   --version <model-version>
 ```
-python predict.py --credentials C:\Users\g557202\data-science-sandbox-d3c168-94e1fa28cf2f.json --project data-science-
-sandbox-d3c168 --model
