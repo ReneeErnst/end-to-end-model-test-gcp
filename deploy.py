@@ -69,16 +69,6 @@ def parse():
             """
         )
     )
-    predict_parser.add_argument(
-        '--prediction-class',
-        required=True,
-        help=textwrap.dedent(
-            """
-            Fully qualified name of predictor class. For example 
-            modeling.predictor.predictor
-            """
-        )
-    )
 
     return parser.parse_args()
 
@@ -145,7 +135,7 @@ def deploy_predictor(args: argparse.Namespace):
         '--python-version', '3.7',
         '--origin', f'{args.origin}',
         '--package-uris', f'{args.package_path}',
-        '--prediction-class', f'{args.prediction_class}',
+        '--prediction-class', 'modeling.predictor.predictor.Predictor',
         '--verbosity=debug'
     ]
     result = subprocess.run(command)

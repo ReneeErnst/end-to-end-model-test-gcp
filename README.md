@@ -44,7 +44,6 @@ discrepancies will be solved before GA.
   * [Testing with local predictions](#testing-with-local-predictions)
   * [Creation of predict package](#creation-of-predict-package)
   * [Add model prediction package to model as a version](#add-model-prediction-package-to-model-as-a-version)
-  * [Testing AI Platform Predict](#testing-ai-platform-predict)
 
 ## AI Platform Notebooks: Development/Testing
 
@@ -103,23 +102,21 @@ Helpful Links:
 https://cloud.google.com/ai-platform/notebooks/docs/ssh-access
 
 Instructions:
-1. On the AI Platform Notebook Instance you created, open your VM Instance 
-   details. On the dropdown for Remote access, select "view gcloud command"
+1. Start your AI Platform Notebook Instance
 
-2. Open your local Google Cloud SDK shell and run the gcloud command for 
-   connecting via SSH to your running instance. Tip- you will want to include a 
-   port at this time. Note that the default port for Jupyter Notebook is 8888
-   
-    Example:
+2. In your command line tool of choice, run the following command to SSH into 
+   your notebook instance: 
 
     ```
     gcloud compute ssh <instance-name>
-      --project <project-id> 
-      --zone <zone-name> 
+      --project <project-name>
+      --zone <zone> 
       -- 
       -L 8888:localhost:8888
     ```
 
+    Note that the default port for Jupyter Notebook is 8888
+    
 3. Once you run the gcloud command, a PuTTY instance will launch and will 
    connect to your AI Platform Notebook instance. Launch Jupyter by entering 
    "jupyter-notebook" in your PuTTY instance. 
@@ -149,16 +146,12 @@ Instructions:
 2. In your command line tool of choice, run the following command to SSH into 
    your notebook instance: 
     ```
-    gcloud beta compute ssh <notebook_instance_name>
-      --project <project_name>
+    gcloud compute ssh <instance-name>
+      --project <project-name>
       --zone <zone>
       -- 
       -L 5010:localhost:5010 
     ```
-   
-   Hint: You can also get this command with all parameters already complete by 
-   opening your VM Instance details and in the dropdown for Remote access, 
-   select "view gcloud command" 
 
 3. You will now have a PuTTY window open. From here you are running commands 
    that will execute in your AI Platform Notebook instance. Note that the 
@@ -444,19 +437,22 @@ versions, including hyperparamater tuning and measuring model quality when
 training. 
 
 ## Model Deployment in AI Platform
+Deploying your model for getting live model predictions!
+
 Helpful Links:
 https://cloud.google.com/ml-engine/docs/deploying-models
 https://cloud.google.com/ml-engine/docs/custom-prediction-routines
 
-Helpful note from Google (make sure to do this to avoid overwriting files):
-When you create subsequent versions of your model, organize them by placing each
-one into its own separate directory within your Cloud Storage bucket.
+If you have ran the AI Platform training job in this repo, your model object and 
+supporting files are already in a bucket and ready for deployment. 
 
-Note that if you used the code in this repo, your model object and supporting 
-files are already in a bucket and ready for deployment. 
+For simplicity and not duplicating code, I recommend having one package for 
+model training jobs and model deployment. The code structure in this repo allows 
+that and as a result allows using modules across both (reusable code) and only 
+requires a single setup.py. 
 
 ### Testing with local predictions
-Unfortuantely, at this time you can't test locally if using custom prediction 
+Unfortuantely, at this time you cannot test locally if using custom prediction 
 routines. For now we will skip documentation for testing locally. 
 
 ### Creation of predict package
@@ -506,6 +502,9 @@ jobs), and I was able to create the model via the console without issue.
 ### Add model prediction package to model as a version
 
 #### Command for submitting model version
+**Note:** See deploy.py code for a python script that simplifies the process of  
+running the gcloud commands for deploying jobs and prediction routines.
+
 ```
 gcloud beta ai-platform versions create <version>
     --model <model_name>
@@ -514,6 +513,15 @@ gcloud beta ai-platform versions create <version>
     --origin gs://<path_to_model_artifacts>
     --package-uris gs://<path_to_packaged_cd>/<name_of_package.tar.gz>
     --prediction-class <modeling.preditor.predictor.Predictor>
+```
+
+Example using deploy.py to run the above:
+```
+python deploy.py predict 
+  --version <version_to_create>
+  --model <name_of_model>
+  --origin gs://<path_to_model_artifacts>
+  --package-path gs://<path_to_packaged_cd>/<name_of_package.tar.gz>
 ```
 
 Ran into multiple issues when doing this, the main one being that errors are 
@@ -536,17 +544,31 @@ passed to users makes debugging exceptionally hard. Solution here was to pickle
 dataframes rather than utilizing hdf files, but took a lot of guessing to find 
 the eventual issue. Further testing/debugging needed. 
 
-### Testing AI Platform Predict
-For simplicity and not duplicating code, I recommend having one package for 
-model training and model deployment. The code structure in this repo allows that
-and as a result only requires a single setup.py. 
+Helpful note from Google (make sure to do this to avoid overwriting files):
+When you create subsequent versions of your model, organize them by placing each
+one into its own separate directory within your Cloud Storage bucket.
 
-Section In Progress
+### Get a model prediction
 
-#### Command to run AI Platform Prediction Deployment
-**Note:** See deploy.py code for a python script that simplifies the process of  
-running the gcloud commands for deploying jobs and prediction routines. 
+#### Get a test prediction from withing the GCP Console:
 
-Section In Progress
+#### Python script for calling the model and getting predictions:
+The predict.py file includes code that will call your model and return a 
+prediction. The test_prediction.json file includes test input parameters for 
+getting a sample model prediction.  
 
+Run the following with the appropriate parameters set to get a prediction from 
+your deployed model: 
 
+ToDo: Test if the credentials parameter is not needed if local env variable is 
+set up. 
+
+```
+python predict.py 
+  --credentials <path_to_local_credientials_file> 
+  --project <project-name>
+  --model <model-name>
+  --version <model-version>
+```
+python predict.py --credentials C:\Users\g557202\data-science-sandbox-d3c168-94e1fa28cf2f.json --project data-science-
+sandbox-d3c168 --model
