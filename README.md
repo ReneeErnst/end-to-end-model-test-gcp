@@ -314,13 +314,18 @@ local credentials file.
 **Note:** See deploy.py code for a python script that simplifies the process of  
 running the gcloud commands for deploying jobs and prediction routines. 
 
+Sample running via deploy.py:
+```
+python deploy.py train --bucket <your_bucket> --name <name_of_training_job>
+```
+
 Locations reflect structure in this repo, update for your use as 
 appropriate. 
 ```
 gcloud ai-platform jobs submit training <job_name> 
   --package-path modeling
   --module-name modeling.trainer.model 
-  --staging-bucket gs://<your_bucket>
+  --staging-bucket gs://<staging_storage_bucket_path>
   --python-version 3.7 
   --runtime-version 1.15
   --
