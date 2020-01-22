@@ -1,0 +1,11 @@
+{
+  "author": "",
+  "id": "test_cauldron",
+  "name": "test_cauldron",
+  "naming_scheme": "S{{##}}-{{name}}.{{ext}}",
+  "steps": [
+    "S01-hello_world.py"
+  ],
+  "summary": "",
+  "title": "test_cauldron"
+}

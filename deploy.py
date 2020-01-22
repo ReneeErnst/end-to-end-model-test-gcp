@@ -5,6 +5,10 @@ import textwrap
 
 
 def parse():
+    """
+    Arguments to be passed in the gcloud commands
+    :return: parser for needed arguments
+    """
     parser = argparse.ArgumentParser(
         prog='deploy',
         description=textwrap.dedent(
@@ -16,11 +20,21 @@ def parse():
     )
     sub_parsers = parser.add_subparsers(dest='action')
 
+    # Required even though this deploy functionality doesn't need arguments
+    # passed in
+    # noinspection PyUnusedLocal
+    local_train_parser = sub_parsers.add_parser('local_train')
+
     train_parser = sub_parsers.add_parser('train')
     train_parser.add_argument(
         '--bucket',
         required=True,
-        help='Specify the storage bucket for staging package and model files'
+        help=textwrap.dedent(
+            """
+            Specify the storage bucket for staging package and outputting
+            model files
+            """
+        )
     )
     train_parser.add_argument(
         '--name',
@@ -55,21 +69,38 @@ def parse():
             """
         )
     )
-    predict_parser.add_argument(
-        '--prediction-class',
-        required=True,
-        help=textwrap.dedent(
-            """
-            Fully qualified name of predictor class. For example 
-            modeling.predictor.predictor
-            """
-        )
-    )
 
     return parser.parse_args()
 
 
+# noinspection PyUnusedLocal
+def deploy_local_train(args: argparse.Namespace):
+    """
+    Run command to test training job locally
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
+    command = [
+        'powershell.exe',
+        'gcloud', 'ai-platform', 'local', 'train',
+        '--package-path', 'modeling',
+        '--module-name', 'modeling.trainer.model',
+        '--job-dir', 'local-training-output',
+        '--',
+        '--run_location=local',
+        '--bucket=None'
+    ]
+    result = subprocess.run(command)
+
+    return result.check_returncode()
+
+
 def deploy_trainer(args: argparse.Namespace):
+    """
+    Run command to run training job in AI Platform
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
     command = [
         'powershell.exe',
         'gcloud', 'ai-platform',
@@ -90,6 +121,11 @@ def deploy_trainer(args: argparse.Namespace):
 
 
 def deploy_predictor(args: argparse.Namespace):
+    """
+    Run command to create a model version in AI Platform
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
     command = [
         'powershell.exe',
         'gcloud', 'beta', 'ai-platform',
@@ -99,7 +135,7 @@ def deploy_predictor(args: argparse.Namespace):
         '--python-version', '3.7',
         '--origin', f'{args.origin}',
         '--package-uris', f'{args.package_path}',
-        '--prediction-class', f'{args.prediction_class}',
+        '--prediction-class', 'modeling.predictor.predictor.Predictor',
         '--verbosity=debug'
     ]
     result = subprocess.run(command)
@@ -108,8 +144,14 @@ def deploy_predictor(args: argparse.Namespace):
 
 
 def main():
+    """
+    Run associated function based on action input
+    :return: run action
+    """
     args = parse()
-    if args.action == 'train':
+    if args.action == 'local_train':
+        return deploy_local_train(args)
+    elif args.action == 'train':
         return deploy_trainer(args)
     elif args.action == 'predict':
         return deploy_predictor(args)
