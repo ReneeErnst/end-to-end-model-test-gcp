@@ -257,6 +257,9 @@ Instructions:
     - Scroll to find SSH keys and select "Show and Edit"
     - Select "Add Item" and paste your public key in the box shown
     - Scroll down the page and select "Save"
+        + Ensure that the key was saved properly. It should show your name and 
+one key. If you are seeing multiple keys, try copying the key into a text 
+editor and copying again into the VM Console.
 
 5. Use your private key to connect PyCharm to your AI Platform Notebook instance
     - Open PyCharm Professional Edition and navigate to "File" --> "Settings" 
