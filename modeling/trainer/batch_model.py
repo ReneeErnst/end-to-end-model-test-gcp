@@ -2,6 +2,7 @@
 import argparse
 import sys
 import pickle
+import os
 
 import pandas as pd
 from google.cloud import bigquery
@@ -133,11 +134,6 @@ df_train_rfr, df_test_rfr = mt.split_train_test(
 
 print('Length of Training Data: ', len(df_train_rfr))
 print('Length of Test Data: ', len(df_test_rfr))
-
-display(HTML(df_train_rfr.head().to_html()))
-display(HTML(df_test_rfr.head().to_html()))
-
-display(df_train_rfr.describe())
 
 # Create model object and importances
 rfr_model, importances = mt.fit_model(
