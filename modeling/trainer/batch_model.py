@@ -21,12 +21,15 @@ parser.add_argument('--run_location')
 # passed in name of bucket
 parser.add_argument('--bucket')
 
+# passed in name of project
+parser.add_argument('--project')
+
 args = parser.parse_args(sys.argv[1:])
 print(vars(args))
 
 RUN_LOCATION = args.run_location
 BUCKET_NAME = args.bucket
-
+PROJECT_NAME = args.project
 
 # Get the data
 if RUN_LOCATION == 'local':
@@ -153,10 +156,6 @@ df_results = mt.model_predict(
 )
 
 #Save results to BigQuery
-project_path = os.path.expanduser('~/project.txt')
-with open(project_path) as f:
-    PROJECT_NAME = f.read().strip()
-
 table_id = 'ai_platform_test.df_results_table'
 project_id = PROJECT_NAME
 df_results.to_gbq(table_id, project_id)
