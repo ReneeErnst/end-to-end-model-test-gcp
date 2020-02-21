@@ -448,7 +448,7 @@ BigQuery table.
 It is a best practice to test a job locally. Make sure to run this from the location
 of the repo. 
 
-#####Command for local training batch job
+##### Command for local training batch job
 Since the results are being saved to BigQuery, the project needs to be specified along 
 with the dataset and table in this format: dataset.table
 ```
@@ -476,7 +476,7 @@ After testing the job locally, you are ready to create a Job on AI Platform. Mak
 adjust the query in the batch_model.py to pull the right amount of records and that you are using 
 the client code that is not dependent on the local credentials file.
 
-#####Command to run batch job on AI Platform 
+##### Command to run batch job on AI Platform 
 Since the results are being saved to BigQuery, the project needs to be specified along 
 with the dataset and table in this format: dataset.table
 ```
@@ -497,7 +497,7 @@ python batch_deploy.py train --name <job_name> --bucket=<bucket_name> --project=
 --dataset_table=<dataset_table>
 ```
 
-#####Results summary for running batch job on AI Platform 
+##### Results summary for running batch job on AI Platform 
 This code ran as expected and finished successfully. 
 
 ## Model Development Using Training Jobs in AI Platform
