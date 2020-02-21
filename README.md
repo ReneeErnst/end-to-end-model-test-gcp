@@ -37,8 +37,12 @@ discrepancies will be solved before GA.
     + [Results Summary: Running AI Platform Jobs](#results-summary-running-ai-platform-jobs)
 
 [Model training and batch prediction using Jobs in AI Platform](#model-training-and-batch-prediction-using-jobs-in-ai-platform)
-
-[Model Development Using Training Jobs in AI Platform](#model-development-using-training-jobs-in-ai-platform)
+   * [Running the batch job locally](#running-the-batch-job-locally)
+   * [Command for local training batch job](#command-for-local-training-batch-job)
+   * [Results summary for running batch job locally](#results-summary-for-running-batch-job-locally)
+   * [Submit training batch job to run in AI Platform](#submit-training-batch-job-to-run-in-ai-platform)
+   * [Command to run batch job on AI Platform](#command-to-run-batch-job-on-ai-platform)
+   * [Results summary for running batch job on AI Platform](#results-summary-for-running-batch-job-on-ai-platform)
 
 [Model Deployment in AI Platform](#model-deployment-in-ai-platform)
   * [Testing with local predictions](#testing-with-local-predictions)
@@ -440,11 +444,11 @@ a Sklearn Random Forest Regression, but also trains the data by splitting the da
 into a train and test dataset. The results of the model prediction are saved in a 
 BigQuery table. 
 
-#### Running the job locally
+#### Running the batch job locally
 It is a best practice to test a job locally. Make sure to run this from the location
 of the repo. 
 
-#####Command for local training job
+#####Command for local training batch job
 Since the results are being saved to BigQuery, the project needs to be specified along 
 with the dataset and table in this format: dataset.table
 ```
@@ -464,15 +468,15 @@ The batch_deploy.py script simplifies the process of running the gcloud commands
 python batch_deploy.py local_train --project=<project_name> --dataset_table=<dataset_table>
 ```
 
-##### Results summary for running job locally 
+##### Results summary for running batch job locally 
 This code ran as expected locally. 
 
-#### Submit training job to run in AI Platform 
+#### Submit training batch job to run in AI Platform 
 After testing the job locally, you are ready to create a Job on AI Platform. Make sure to 
 adjust the query in the batch_model.py to pull the right amount of records and that you are using 
 the client code that is not dependent on the local credentials file.
 
-#####Command to run on AI Platform 
+#####Command to run batch job on AI Platform 
 Since the results are being saved to BigQuery, the project needs to be specified along 
 with the dataset and table in this format: dataset.table
 ```
@@ -493,7 +497,7 @@ python batch_deploy.py train --name <job_name> --bucket=<bucket_name> --project=
 --dataset_table=<dataset_table>
 ```
 
-#####Results summary for running on AI Platform 
+#####Results summary for running batch job on AI Platform 
 This code ran as expected and finished successfully. 
 
 ## Model Development Using Training Jobs in AI Platform
