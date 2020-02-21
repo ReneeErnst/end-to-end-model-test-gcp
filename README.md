@@ -433,7 +433,68 @@ General note - make sure to be thoughtful in where to save model objects to.
 Team likely wants to add some automation to this process. 
 
 ## Model training and batch prediction using Jobs in AI Platform
-Coming Soon: Scheduled model training and batch predictions in AI Platform
+This section is an extension of the Training Jobs in AI Platform section. 
+All of the instructions explained in that section, like setting credentials, 
+should still be done before running the commands in this section. The code runs 
+a Sklearn Random Forest Regression, but also trains the data by splitting the data
+into a train and test dataset. The results of the model prediction are saved in a 
+BigQuery table. 
+
+#### Running the job locally
+It is a best practice to test a job locally. Make sure to run this from the location
+of the repo. 
+
+#####Command for local training job
+Since the results are being saved to BigQuery, the project needs to be specified along 
+with the dataset and table in this format: dataset.table
+```
+gcloud ai-platform local train
+  --package-path modeling.trainer
+  --module-name modeling.trainer.batch_model 
+  --job-dir local-training-output
+  --
+  --run_location=local
+  --bucket=None
+  --project=<project_name>
+  --dataset_table=<dataset.table> 
+```
+
+The batch_deploy.py script simplifies the process of running the gcloud commands. 
+```
+python batch_deploy.py local_train --project=<project_name> --dataset_table=<dataset_table>
+```
+
+##### Results summary for running job locally 
+This code ran as expected locally. 
+
+#### Submit training job to run in AI Platform 
+After testing the job locally, you are ready to create a Job on AI Platform. Make sure to 
+adjust the query in the batch_model.py to pull the right amount of records and that you are using 
+the client code that is not dependent on the local credentials file.
+
+#####Command to run on AI Platform 
+Since the results are being saved to BigQuery, the project needs to be specified along 
+with the dataset and table in this format: dataset.table
+```
+gcloud ai-platform jobs submit training <job_name> 
+  --package-path modeling
+  --module-name modeling.trainer.batch_model 
+  --staging-bucket gs://<staging_storage_bucket_path>
+  --python-version 3.7 
+  --runtime-version 1.15
+  --
+  --bucket=<bucket_name>
+  --project=<project_name>
+  --dataset_table=<dataset.table>
+```
+The batch_deploy.py script simplifies the process of running the gcloud commands. 
+```
+python batch_deploy.py train --name <job_name> --bucket=<bucket_name> --project=<project_name> 
+--dataset_table=<dataset_table>
+```
+
+#####Results summary for running on AI Platform 
+This code ran as expected and finished successfully. 
 
 ## Model Development Using Training Jobs in AI Platform
 Coming Soon: Using Training jobs during model development for testing model 

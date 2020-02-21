@@ -24,13 +24,16 @@ parser.add_argument('--bucket')
 # passed in name of project
 parser.add_argument('--project')
 
+# passed in name of project
+parser.add_argument('--dataset_table')
+
 args = parser.parse_args(sys.argv[1:])
 print(vars(args))
 
 RUN_LOCATION = args.run_location
 BUCKET_NAME = args.bucket
 PROJECT_NAME = args.project
-
+DATASET_TABLE = args.dataset_table
 # Get the data
 if RUN_LOCATION == 'local':
     num_records = 100
@@ -156,6 +159,7 @@ df_results = mt.model_predict(
 )
 
 #Save results to BigQuery
-table_id = 'ai_platform_test.df_results_table'
+#table_id = 'ai_platform_test.df_results_table'
 project_id = PROJECT_NAME
-df_results.to_gbq(table_id, project_id)
+dataset_table_id = DATASET_TABLE
+df_results.to_gbq(dataset_table_id, project_id)
