@@ -107,7 +107,7 @@ def deploy_local_train(args: argparse.Namespace):
         '--job-dir', 'local-training-output',
         '--',
         '--run_location=local',
-        '--bucket=None'
+        '--bucket=None',
 		f'--project={args.project}',
 		f'--dataset_table={args.dataset_table}'
     ]
