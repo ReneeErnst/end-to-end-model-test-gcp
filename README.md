@@ -37,8 +37,12 @@ discrepancies will be solved before GA.
     + [Results Summary: Running AI Platform Jobs](#results-summary-running-ai-platform-jobs)
 
 [Model training and batch prediction using Jobs in AI Platform](#model-training-and-batch-prediction-using-jobs-in-ai-platform)
-
-[Model Development Using Training Jobs in AI Platform](#model-development-using-training-jobs-in-ai-platform)
+   * [Running the batch job locally](#running-the-batch-job-locally)
+   * [Command for local training batch job](#command-for-local-training-batch-job)
+   * [Results summary for running batch job locally](#results-summary-for-running-batch-job-locally)
+   * [Submit training batch job to run in AI Platform](#submit-training-batch-job-to-run-in-ai-platform)
+   * [Command to run batch job on AI Platform](#command-to-run-batch-job-on-ai-platform)
+   * [Results summary for running batch job on AI Platform](#results-summary-for-running-batch-job-on-ai-platform)
 
 [Model Deployment in AI Platform](#model-deployment-in-ai-platform)
   * [Testing with local predictions](#testing-with-local-predictions)
@@ -257,6 +261,9 @@ Instructions:
     - Scroll to find SSH keys and select "Show and Edit"
     - Select "Add Item" and paste your public key in the box shown
     - Scroll down the page and select "Save"
+        + Ensure that the key was saved properly. It should show your name and 
+one key. If you are seeing multiple keys, try copying the key into a text 
+editor and copying again into the VM Console.
 
 5. Use your private key to connect PyCharm to your AI Platform Notebook instance
     - Open PyCharm Professional Edition and navigate to "File" --> "Settings" 
@@ -430,7 +437,68 @@ General note - make sure to be thoughtful in where to save model objects to.
 Team likely wants to add some automation to this process. 
 
 ## Model training and batch prediction using Jobs in AI Platform
-Coming Soon: Scheduled model training and batch predictions in AI Platform
+This section is an extension of the Training Jobs in AI Platform section. 
+All of the instructions explained in that section, like setting credentials, 
+should still be done before running the commands in this section. The code runs 
+a Sklearn Random Forest Regression, but also trains the data by splitting the data
+into a train and test dataset. The results of the model prediction are saved in a 
+BigQuery table. 
+
+#### Running the batch job locally
+It is a best practice to test a job locally. Make sure to run this from the location
+of the repo. 
+
+##### Command for local training batch job
+Since the results are being saved to BigQuery, the project needs to be specified along 
+with the dataset and table in this format: dataset.table
+```
+gcloud ai-platform local train
+  --package-path modeling.trainer
+  --module-name modeling.trainer.batch_model 
+  --job-dir local-training-output
+  --
+  --run_location=local
+  --bucket=None
+  --project=<project_name>
+  --dataset_table=<dataset.table> 
+```
+
+The batch_deploy.py script simplifies the process of running the gcloud commands. 
+```
+python batch_deploy.py local_train --project=<project_name> --dataset_table=<dataset_table>
+```
+
+##### Results summary for running batch job locally 
+This code ran as expected locally. 
+
+#### Submit training batch job to run in AI Platform 
+After testing the job locally, you are ready to create a Job on AI Platform. Make sure to 
+adjust the query in the batch_model.py to pull the right amount of records and that you are using 
+the client code that is not dependent on the local credentials file.
+
+##### Command to run batch job on AI Platform 
+Since the results are being saved to BigQuery, the project needs to be specified along 
+with the dataset and table in this format: dataset.table
+```
+gcloud ai-platform jobs submit training <job_name> 
+  --package-path modeling
+  --module-name modeling.trainer.batch_model 
+  --staging-bucket gs://<staging_storage_bucket_path>
+  --python-version 3.7 
+  --runtime-version 1.15
+  --
+  --bucket=<bucket_name>
+  --project=<project_name>
+  --dataset_table=<dataset.table>
+```
+The batch_deploy.py script simplifies the process of running the gcloud commands. 
+```
+python batch_deploy.py train --name <job_name> --bucket=<bucket_name> --project=<project_name> 
+--dataset_table=<dataset_table>
+```
+
+##### Results summary for running batch job on AI Platform 
+This code ran as expected and finished successfully. 
 
 ## Model Development Using Training Jobs in AI Platform
 Coming Soon: Using Training jobs during model development for testing model 

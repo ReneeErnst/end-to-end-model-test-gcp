@@ -6,6 +6,7 @@ REQUIRED_PACKAGES = [
     'tables==3.5.2',
     'numpy==1.16.4',
     'pandas==0.24.0',
+    'pandas-gbq==0.11.0',
     'scikit-learn==0.20.2'
 ]
 
