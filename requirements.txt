@@ -1,9 +1,9 @@
 h5py
 tables
-numpy==1.16.4
-pandas==0.24.0
-pandas-gbq==0.11.0
-scikit-learn==0.20.2
+numpy
+pandas
+pandas-gbq
+scikit-learn
 cauldron-notebook
 google-cloud-bigquery
 google-cloud-storage
