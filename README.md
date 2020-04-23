@@ -4,12 +4,9 @@ Testing using GCP AI platform for entire modeling process - Initial
 testing/development of model to real time model predictions. 
 
 This documentation is based on the current state of AI Platform as of 
-January 2020. Note that as of this date, much of AI Platform, including 
-Notebooks, Jobs and Custom Prediction routines, is in Beta. AI Platform 
-Notebooks is running version 1.14 of AI Platform but other components of AI 
-Platform Jobs provide the option of running different versions, including the 
-newer 1.15 runtime version. 1.15 includes Python 3.7, with 1.14's latest 
-included version of Python being 3.5. 
+April 2020. Note that as of this date, some aspects of AI Platform are still in
+Beta, such as Custom Prediction routines. Recent updates do include Python 3.7 
+and consistent runtime versions across the services. 
 
 General word of caution. As of today, I have found discrepancies in the package 
 versions included in various components of AI Platform, even for the same 
@@ -136,7 +133,8 @@ Congratulations- You are up and running!
 
 #### Remote Execution: Cauldron Notebooks
 Prerequisites:                                                             
-1. You must have Python 3.5+ with cauldron-notebook python package installed                       
+1. You must have Python 3.6+ with cauldron-notebook python package installed on 
+   your machine                      
 2. If using a windows machine, you must have PuTTY installed.              
    If using a Mac, you should have a built-in SSH client, so PuTTY is not  
    needed.                                                                 
@@ -153,7 +151,7 @@ Instructions:
    your notebook instance: 
     ```
     gcloud compute ssh <instance-name>
-      --project <project-name>
+      --project <project-id>
       --zone <zone>
       -- 
       -L 5010:localhost:5010 
@@ -166,16 +164,7 @@ Instructions:
    
 4. If you haven't already, install cauldron-notebook:
     ```
-    sudo pip3 install cauldron-notebook
-    ```
-
-    Given how AI Platform is currently set up, you need to sudo install 
-    Cauldron as default setup don't properly install the package. 
-    
-    Hint - You can check to see if it is already installed using the following 
-    command:
-    ```
-    pip3 list
+    pip3 install cauldron-notebook
     ```
 
 5. Start Cauldron Kernel in PuTTY instance with the following command:
