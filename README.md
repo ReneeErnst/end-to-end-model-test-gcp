@@ -14,8 +14,8 @@ included version of Python being 3.5.
 General word of caution. As of today, I have found discrepancies in the package 
 versions included in various components of AI Platform, even for the same 
 runtime version. For example, the google cloud python packages are different 
-versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when building
-flows that depend on different components. Hopefully these types of 
+versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when 
+building flows that depend on different components. Hopefully these types of 
 discrepancies will be solved before GA. 
 
 ## Table of Contents
@@ -54,7 +54,7 @@ discrepancies will be solved before GA.
 
 ### Jupyter Lab in AI Platform
 Created a basic forecasting project using the public Iowa Liquor Sales dataset. 
-See forecasting_training_test.ipynb for the Jupyter Notebook. 
+See model_train_save_test.ipynb for the Jupyter Notebook. 
 
 Includes code for pulling the data via Big Query, doing basic EDA and data 
 manipulation and a basic a Random Forest Regression predicting liquor sales 
@@ -72,8 +72,9 @@ others you are working with, but don't want explicitly in your code. Do not
 use this for passwords. 
 
 **Example:** Create BUCKET_NAME variable
-While in the top folder of your AI Platform Notebook (above folder for repo) run 
-the following command to create text file that contains the name of your bucket:
+While in the top folder of your AI Platform Notebook (above folder for repo) 
+run the following command to create text file that contains the name of your 
+bucket:
 ```
 echo <bucket_name> > bucket.txt
 ```
@@ -88,10 +89,10 @@ with open(bucket_path) as f:
 ```
 
 #### Results Summary: AI Platform Notebooks/Jupyter Lab
-Coding and running the model in Jupyter Lab was uneventful. Notebook in this 
-repo should meet the needs of basic documentation. Note that because AI Platform
-Notebooks uses AI Platform version 1.14, we had to code in Python 3.5 (no 
-f-strings or type hinting). 
+Coding and running the model in Jupyter Lab was uneventful. The Jupyter 
+notebook in this repo should meet the needs of basic documentation. The Jupyter
+notebook has now been updated to use Python 3.7 after the most recent AI 
+Platform update. 
 
 ### Remote execution in AI Platform Notebook Instances
 
@@ -168,8 +169,8 @@ Instructions:
     sudo pip3 install cauldron-notebook
     ```
 
-    Given how AI Platform is currently set up, you need to sudo install Cauldron 
-    as default setup don't properly install the package. 
+    Given how AI Platform is currently set up, you need to sudo install 
+    Cauldron as default setup don't properly install the package. 
     
     Hint - You can check to see if it is already installed using the following 
     command:
@@ -209,8 +210,8 @@ Instructions:
    details. On the dropdown for Remote access, select "SSH". A linux terminal 
    will pop-up in a new window.
 
-2. Follow the steps in the Managing SSH keys in metadata link above for creating
-   a new SSH key.
+2. Follow the steps in the Managing SSH keys in metadata link above for 
+   creating a new SSH key.
 
     Example:
     - In the terminal, use the ssh-keygen command to generate a private SSH key 
@@ -226,8 +227,8 @@ Instructions:
         chmod 400 ~/.ssh/<KEY_FILENAME>
         ```
 
-3. Follow the steps in the Managing SSH keys in metadata link above for locating
-   an SSH key.
+3. Follow the steps in the Managing SSH keys in metadata link above for 
+   locating an SSH key.
 
     Locate and save your private key:
     - In the terminal, locate your private key:
@@ -265,7 +266,8 @@ Instructions:
 one key. If you are seeing multiple keys, try copying the key into a text 
 editor and copying again into the VM Console.
 
-5. Use your private key to connect PyCharm to your AI Platform Notebook instance
+5. Use your private key to connect PyCharm to your AI Platform Notebook 
+   instance
     - Open PyCharm Professional Edition and navigate to "File" --> "Settings" 
       --> "Deployment"
     - Select "+" and "SFTP"
@@ -327,10 +329,10 @@ Make sure you cd into the appropriate folder on your machine for this to run.
 In this case I'm running this from end-to-end-model-test-gcp directory.
 
 Anything after the line that just has -- are user arguments required in the 
-python code specific to the model.py code in the trainer for this repo. In order
-to make the training code work for both local training and submitting to AI 
-Platform, we need to have the user defined bucket parameter here, but it can be 
-set to None when running locally.
+python code specific to the model.py code in the trainer for this repo. In 
+order to make the training code work for both local training and submitting to 
+AI Platform, we need to have the user defined bucket parameter here, but it can 
+be set to None when running locally.
 
 ``` 
 gcloud ai-platform local train  
@@ -398,13 +400,13 @@ this problem is solve I ran into issues with the Big Query Python package that
 comes pre-installed from Google. At one point, GCP had a general google-cloud 
 Python package that handled all GCP related connectivity. This is the package 
 version that is included when specifying runtime version 1.14 in AI Platform 
-Jobs. However,at some point Google split it out in to separate packages, such as 
-google-cloud-bigquery and that is what is used in AI Platform Notebooks (also 
-version 1.14). One of the changes that happened in the bigquery module is the 
-ability to write .to_dataframe (`df = query_job.to_dataframe()`) on the output 
-of a query job to turn it into a pandas dataframe. As a result, the version of 
-google-cloud in AI Platform Jobs was not working with our current code even 
-though it did work in AI Platform Notebooks. 
+Jobs. However,at some point Google split it out in to separate packages, such 
+as google-cloud-bigquery and that is what is used in AI Platform Notebooks 
+(also version 1.14). One of the changes that happened in the bigquery module is
+the ability to write .to_dataframe (`df = query_job.to_dataframe()`) on the 
+output of a query job to turn it into a pandas dataframe. As a result, the 
+version of google-cloud in AI Platform Jobs was not working with our current 
+code even though it did work in AI Platform Notebooks. 
 
 **Test 3:** Specify/pin google-cloud-biquery and google-cloud-storage in 
 required packages within the setup.py to hopefully solve package version 
@@ -422,10 +424,10 @@ even though Notebooks is not yet running this version.
 
 ##### Results Summary: Running AI Platform Jobs
 If needing to include any additional code/modules along with your code other 
-than the basic model script, need to create your own setup.py rather than having
-Google do that for you. Will reach out to Google Rep about possibility of having 
-an option in the gcloud tool to specify that the setuptools find_packages() 
-should be include in setup.py.
+than the basic model script, need to create your own setup.py rather than 
+having Google do that for you. Will reach out to Google Rep about possibility 
+of having an option in the gcloud tool to specify that the setuptools 
+find_packages() should be include in setup.py.
 
 Version issues between AI Platform Notebooks and AI Platform Jobs were noted. 
 Note that AI Platform runtime version 1.14 comes with google-cloud package 
@@ -440,17 +442,17 @@ Team likely wants to add some automation to this process.
 This section is an extension of the Training Jobs in AI Platform section. 
 All of the instructions explained in that section, like setting credentials, 
 should still be done before running the commands in this section. The code runs 
-a Sklearn Random Forest Regression, but also trains the data by splitting the data
-into a train and test dataset. The results of the model prediction are saved in a 
-BigQuery table. 
+a Sklearn Random Forest Regression, but also trains the data by splitting the 
+data into a train and test dataset. The results of the model prediction are 
+saved in a BigQuery table. 
 
 #### Running the batch job locally
-It is a best practice to test a job locally. Make sure to run this from the location
-of the repo. 
+It is a best practice to test a job locally. Make sure to run this from the 
+location of the repo. 
 
 ##### Command for local training batch job
-Since the results are being saved to BigQuery, the project needs to be specified along 
-with the dataset and table in this format: dataset.table
+Since the results are being saved to BigQuery, the project needs to be 
+specified along with the dataset and table in this format: dataset.table
 ```
 gcloud ai-platform local train
   --package-path modeling.trainer
@@ -463,22 +465,27 @@ gcloud ai-platform local train
   --dataset_table=<dataset.table> 
 ```
 
-The batch_deploy.py script simplifies the process of running the gcloud commands. 
+The batch_deploy.py script simplifies the process of running the gcloud 
+commands. 
 ```
-python batch_deploy.py local_train --project=<project_name> --dataset_table=<dataset_table>
+python batch_deploy.py local_train 
+  --project=<project_name> 
+  --dataset_table=<dataset_table>
 ```
 
 ##### Results summary for running batch job locally 
 This code ran as expected locally. 
 
 #### Submit training batch job to run in AI Platform 
-After testing the job locally, you are ready to create a Job on AI Platform. Make sure to 
-adjust the query in the batch_model.py to pull the right amount of records and that you are using 
-the client code that is not dependent on the local credentials file.
+After testing the job locally, you are ready to create a Job on AI Platform. 
+Make sure to adjust the query in the batch_model.py to pull the right amount of
+records and that you are using the client code that is not dependent on the 
+local credentials file.
 
 ##### Command to run batch job on AI Platform 
-Since the results are being saved to BigQuery, the project needs to be specified along 
-with the dataset and table in this format: dataset.table
+Since the results are being saved to BigQuery, the project needs to be 
+specified along with the dataset and table in this format: dataset.table
+
 ```
 gcloud ai-platform jobs submit training <job_name> 
   --package-path modeling
@@ -491,10 +498,15 @@ gcloud ai-platform jobs submit training <job_name>
   --project=<project_name>
   --dataset_table=<dataset.table>
 ```
-The batch_deploy.py script simplifies the process of running the gcloud commands. 
+
+The batch_deploy.py script simplifies the process of running the gcloud 
+commands. 
 ```
-python batch_deploy.py train --name <job_name> --bucket=<bucket_name> --project=<project_name> 
---dataset_table=<dataset_table>
+python batch_deploy.py train 
+  --name <job_name> 
+  --bucket=<bucket_name> 
+  --project=<project_name> 
+  --dataset_table=<dataset_table>
 ```
 
 ##### Results summary for running batch job on AI Platform 
@@ -512,26 +524,28 @@ Helpful Links:
 https://cloud.google.com/ml-engine/docs/deploying-models
 https://cloud.google.com/ml-engine/docs/custom-prediction-routines
 
-If you have ran the AI Platform training job in this repo, your model object and 
-supporting files are already in a bucket and ready for deployment. 
+If you have ran the AI Platform training job in this repo, your model object 
+and supporting files are already in a bucket and ready for deployment. 
 
 For simplicity and not duplicating code, I recommend having one package for 
-model training jobs and model deployment. The code structure in this repo allows 
-that and as a result allows using modules across both (reusable code) and only 
-requires a single setup.py. 
+model training jobs and model deployment. The code structure in this repo 
+allows that and as a result allows using modules across both (reusable code) 
+and only requires a single setup.py. 
 
 ### Testing with local predictions
 Unfortuantely, at this time you cannot test locally if using custom prediction 
 routines. For now we will skip documentation for testing locally. 
 
 ### Creation of predict package
-As part of setting up your prediction package, you must create a Predictor class
-implements the instance shown under the Create Your Predictor section here:
+As part of setting up your prediction package, you must create a Predictor 
+class implements the instance shown under the Create Your Predictor section 
+here:
+
 https://cloud.google.com/ml-engine/docs/custom-prediction-routines
 
 It is very important to closely follow the formatting of this as AI Platform 
-strictly expects this format. The predictor module in this repo shows an example
-of working code. 
+strictly expects this format. The predictor module in this repo shows an 
+example of working code. 
 
 After creating the predictor code, package it and then store it in GCS. Note 
 that Google recommends using a designated staging directory if iterating and 
@@ -604,8 +618,8 @@ Unexpected error when loading the model: Support for generic buffers has not
 been implemented. (Error code: 0)"
 ```
 
-I was unable to load hdf files even though the tables requirement is included as 
-a required package in the setup.py, and that I was able to create hdf files
+I was unable to load hdf files even though the tables requirement is included 
+as a required package in the setup.py, and that I was able to create hdf files
 in AI Platform Jobs and AI Platform Notebooks. My best guess is this is 
 versioning discrepancies in AI Platform (similar to my jobs issue with AI 
 Platform runtime 1.14 described above). However, the lack of error information 
@@ -614,8 +628,8 @@ dataframes rather than utilizing hdf files, but took a lot of guessing to find
 the eventual issue. Further testing/debugging needed. 
 
 Helpful note from Google (make sure to do this to avoid overwriting files):
-When you create subsequent versions of your model, organize them by placing each
-one into its own separate directory within your Cloud Storage bucket.
+When you create subsequent versions of your model, organize them by placing 
+each one into its own separate directory within your Cloud Storage bucket.
 
 ### Get a model prediction
 
