@@ -297,7 +297,7 @@ data) to ensure your packaged code is working before submitting your job to run
 on AI Platform. Make sure to run this from the location of your repo. The 
 command structure for this is:
 
-#####Authentication:
+##### Authentication:
 When running locally, make sure that you are first authenticated. 
 
 Google recommends setting up a GOOGLE_APPLICATION_CREDENTIALS path. See 
@@ -366,7 +366,11 @@ running the gcloud commands for deploying jobs and prediction routines.
 
 **Sample running via deploy.py:**
 ```
-python deploy.py train --bucket <your_bucket> --name <name_of_training_job>
+python deploy.py train 
+  --staging-path <gs://staging_bucket/where_to_store_training_package>
+  --bucket <bucket_name_for_model_objects>
+  --path <path_in_bucket_for_model_objects> 
+  --name <name_of_training_job>
 ```
 
 **Running directly via gcloud command:**

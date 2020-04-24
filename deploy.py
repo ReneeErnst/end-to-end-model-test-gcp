@@ -29,12 +29,12 @@ def parse():
     train_parser.add_argument(
         '--bucket',
         required=True,
-        help=textwrap.dedent(
-            """
-            Specify the storage bucket for staging package and outputting
-            model files
-            """
-        )
+        help='Specify the storage bucket for saving model related output'
+    )
+    train_parser.add_argument(
+        '--path',
+        required=True,
+        help='Specify the path in bucket for saving model related output'
     )
     train_parser.add_argument(
         '--name',
@@ -112,7 +112,8 @@ def deploy_trainer(args: argparse.Namespace):
         '--python-version', '3.7',
         '--runtime-version', '1.15',
         '--',
-        f'--bucket={args.bucket}'
+        f'--bucket={args.bucket}',
+        f'--path={args.path}'
     ]
 
     result = subprocess.run(command)
