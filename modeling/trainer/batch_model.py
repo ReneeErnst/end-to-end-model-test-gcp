@@ -2,7 +2,6 @@
 import argparse
 import sys
 import pickle
-import os
 
 import pandas as pd
 from google.cloud import bigquery
@@ -131,7 +130,7 @@ else:
     blob.upload_from_filename('model.pkl')
 
 
-#Train and Test Data
+# Train and Test Data
 df_train_rfr, df_test_rfr = mt.split_train_test(
     df_cat,
     'month',
@@ -150,7 +149,7 @@ rfr_model, importances = mt.fit_model(
     leaves=5
 )
 
-#Model results
+# Model results
 df_results = mt.model_predict(
     rfr_model,
     df_test_rfr,
@@ -158,8 +157,7 @@ df_results = mt.model_predict(
     x_cols
 )
 
-#Save results to BigQuery
-#table_id = 'ai_platform_test.df_results_table'
+# Save results to BigQuery
 project_id = PROJECT_NAME
 dataset_table_id = DATASET_TABLE
 df_results.to_gbq(dataset_table_id, project_id)

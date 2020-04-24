@@ -6,14 +6,7 @@ testing/development of model to real time model predictions.
 This documentation is based on the current state of AI Platform as of 
 April 2020. Note that as of this date, some aspects of AI Platform are still in
 Beta, such as Custom Prediction routines. Recent updates do include Python 3.7 
-and consistent runtime versions across the services. 
-
-General word of caution. As of today, I have found discrepancies in the package 
-versions included in various components of AI Platform, even for the same 
-runtime version. For example, the google cloud python packages are different 
-versions when using runtime 1.14 in Notebooks vs Jobs. Be cautious when 
-building flows that depend on different components. Hopefully these types of 
-discrepancies will be solved before GA. 
+and consistent runtime versions across the services.  
 
 ## Table of Contents
 [AI Platform Notebooks: Development/Testing](#ai-platform-notebooks-developmenttesting)
@@ -449,12 +442,11 @@ gcloud ai-platform local train
 ```
 
 # ToDo: Perhaps add batch deploy to the deploy.py script as another option
-The batch_deploy.py script simplifies the process of running the gcloud 
-commands. 
+The deploy.py script simplifies the process of running the gcloud commands. 
 ```
-python batch_deploy.py local_train 
+python deploy.py local_batch_train 
   --project=<project_name> 
-  --dataset_table=<dataset_table>
+  --dataset_table=<dataset.table>
 ```
 
 ##### Results summary for running batch job locally 
@@ -483,14 +475,13 @@ gcloud ai-platform jobs submit training <job_name>
   --dataset_table=<dataset.table>
 ```
 
-The batch_deploy.py script simplifies the process of running the gcloud 
-commands. 
+The deploy.py script simplifies the process of running the gcloud commands. 
 ```
-python batch_deploy.py train 
+python deploy.py batch_train 
   --name <job_name> 
   --bucket=<bucket_name> 
   --project=<project_name> 
-  --dataset_table=<dataset_table>
+  --dataset_table=<dataset.table>
 ```
 
 ##### Results summary for running batch job on AI Platform 
