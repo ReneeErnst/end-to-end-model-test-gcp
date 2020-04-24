@@ -441,7 +441,6 @@ gcloud ai-platform local train
   --dataset_table=<dataset.table> 
 ```
 
-# ToDo: Perhaps add batch deploy to the deploy.py script as another option
 The deploy.py script simplifies the process of running the gcloud commands. 
 ```
 python deploy.py local_batch_train 
