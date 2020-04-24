@@ -285,7 +285,7 @@ screen
 For the purpose of testing Jobs in AI Platform I created code for running a 
 Sklearn Random Forest Regression, creating the model objects, and saving them
 out to a bucket. Below is documentation for that process, as well as 
-issues/gotchas I found along the way. 
+issues/gotchas found along the way. 
 
 Helpful Links:
 https://cloud.google.com/ml-engine/docs/training-jobs
@@ -297,15 +297,28 @@ data) to ensure your packaged code is working before submitting your job to run
 on AI Platform. Make sure to run this from the location of your repo. The 
 command structure for this is:
 
+#####Authentication:
+When running locally, make sure that you are first authenticated. 
+
+Google recommends setting up a GOOGLE_APPLICATION_CREDENTIALS path. See 
+instructions here: 
+https://cloud.google.com/docs/authentication/getting-started
+
+But for those that don't want a credentials file living on their machine or 
+don't have a better approach for handling that, the following gcloud command 
+can be used (our recommended approach):
+```
+gcloud auth application-default login 
+```
+
+Base on our testing, the authentication may last for differing amounts of time 
+depending on what you are doing. 
+
 ##### Command for local training job:
-**Note:** See deploy.py code for a python script that simplifies the process of  
+**Note:** See deploy.py code for a python script that simplifies the process of 
 running the gcloud commands for deploying jobs and prediction routines. See the 
 local_action for running local training job. If using this you can simply run 
-`python deploy.py local_train`
-
-When running locally, make sure that you have your 
-GOOGLE_APPLICATION_CREDENTIALS path setup. See instructions here: 
-https://cloud.google.com/docs/authentication/getting-started
+`python deploy.py local_train` rather than the approach below.
 
 Locations reflect structure in this repo, update for your use as appropriate. 
 In this case the model output will get saved to the main directory/repo folder.
@@ -343,13 +356,20 @@ records and that you are using the client code that is not dependent on the
 local credentials file.
   
 ##### Command to run Job on AI Platform (final version after testing):
+First, make sure you are running in the correct project if you have multiple:
+```
+gcloud config set project <project-id>
+```
+
 **Note:** See deploy.py code for a python script that simplifies the process of  
 running the gcloud commands for deploying jobs and prediction routines. 
 
-Sample running via deploy.py:
+**Sample running via deploy.py:**
 ```
 python deploy.py train --bucket <your_bucket> --name <name_of_training_job>
 ```
+
+**Running directly via gcloud command:**
 
 Locations reflect structure in this repo, update for your use as 
 appropriate. 
@@ -365,10 +385,9 @@ gcloud ai-platform jobs submit training <job_name>
 ```
 
 ##### Tests and Findings Running Job on AI Platform
-**Test 1:** Run code as is using runtime-version 1.14 and Python 3.5 to match 
-what is ran in AI Platform Notebooks. In this test I attempted to use gcloud to 
-upload and package the code - this method does not require creating a setup.py 
-and is the recommended method (see first method described here: 
+**Test 1:** In this test I attempted to use gcloud to upload and package the 
+code - this method does not require creating a setup.py and is the recommended 
+method (see first method described here: 
 https://cloud.google.com/ml-engine/docs/packaging-trainer). 
     
 **Results:** Resulted in errors because this method did not package up the 
@@ -378,38 +397,15 @@ putting these modules in different locations and deeply exploring the google
 documentation for a way to indicate we want these modules to be included. 
 No solution was available. Interestingly, there is a `packages=find_packages()`
 option when creating your own setup.py, but no way to specify this when using 
-the gcloud command. Will bring this up with Google Rep as a recommended add. 
+the gcloud command. This test was ran in Jan 2020 and I'm unsure if an update 
+has been put in place.  
 
 **Test 2:** Create setup.py to provide instructions on what should be packaged 
 with the model trainer code. Using this method we were able to specify 
 `packages=find_packages()` to include modules in the repo. 
 
-**Results:** This test correctly included the modules as expected, but now that 
-this problem is solve I ran into issues with the Big Query Python package that 
-comes pre-installed from Google. At one point, GCP had a general google-cloud 
-Python package that handled all GCP related connectivity. This is the package 
-version that is included when specifying runtime version 1.14 in AI Platform 
-Jobs. However,at some point Google split it out in to separate packages, such 
-as google-cloud-bigquery and that is what is used in AI Platform Notebooks 
-(also version 1.14). One of the changes that happened in the bigquery module is
-the ability to write .to_dataframe (`df = query_job.to_dataframe()`) on the 
-output of a query job to turn it into a pandas dataframe. As a result, the 
-version of google-cloud in AI Platform Jobs was not working with our current 
-code even though it did work in AI Platform Notebooks. 
-
-**Test 3:** Specify/pin google-cloud-biquery and google-cloud-storage in 
-required packages within the setup.py to hopefully solve package version 
-discrepancies between AI Platform Runtime 1.14 in Jobs vs Notebooks.
-
-**Results:** This failed because it created conflicts with other pre-installed 
-google-cloud packages. Given the amount of work that it would take to sync all 
-this up for packages not used by this project, I decided to scrap trying to use 
-runtime version 1.14 for AI Platform Jobs and test the job with version 1.15, 
-even though Notebooks is not yet running this version. 
-
-**Test 4:** Ran test using AI Platform runtime version 1.15 with Python 3.7.
-
-**Results:** Successfully ran job 
+**Results:** This test correctly included the modules as expected and job was 
+successful
 
 ##### Results Summary: Running AI Platform Jobs
 If needing to include any additional code/modules along with your code other 
@@ -418,14 +414,8 @@ having Google do that for you. Will reach out to Google Rep about possibility
 of having an option in the gcloud tool to specify that the setuptools 
 find_packages() should be include in setup.py.
 
-Version issues between AI Platform Notebooks and AI Platform Jobs were noted. 
-Note that AI Platform runtime version 1.14 comes with google-cloud package 
-pre-installed, this same runtime for AI Platform Notebooks comes with the newer 
-individual packages installed. This can create conflict when moving code from 
-Notebooks to Jobs (or likely model serving). 
-
 General note - make sure to be thoughtful in where to save model objects to. 
-Team likely wants to add some automation to this process. 
+Likely want some automation to this process. 
 
 ## Model training and batch prediction using Jobs in AI Platform
 This section is an extension of the Training Jobs in AI Platform section. 
@@ -454,6 +444,7 @@ gcloud ai-platform local train
   --dataset_table=<dataset.table> 
 ```
 
+# ToDo: Perhaps add batch deploy to the deploy.py script as another option
 The batch_deploy.py script simplifies the process of running the gcloud 
 commands. 
 ```
@@ -502,7 +493,7 @@ python batch_deploy.py train
 This code ran as expected and finished successfully. 
 
 ## Model Development Using Training Jobs in AI Platform
-Coming Soon: Using Training jobs during model development for testing model 
+**Coming Soon:** Using Training jobs during model development for testing model 
 versions, including hyperparamater tuning and measuring model quality when 
 training. 
 
@@ -565,12 +556,6 @@ following command:
 gcloud ai-platform models create <model-name> --regions <region>
 ```
 
-Note: I received an odd error when first attempting this via the gcloud command
-rather than the console. The error indicated that I do not have permission to 
-access my project. This error is not a clear indicator of the true issue given
-that I can access the project in other ways (for example listing ai platform 
-jobs), and I was able to create the model via the console without issue. 
-
 ### Add model prediction package to model as a version
 
 #### Command for submitting model version
@@ -596,6 +581,10 @@ python deploy.py predict
   --package-path gs://<path_to_packaged_cd>/<name_of_package.tar.gz>
 ```
 
+Ran into a runtime version error - 2.1 is not yet supported. I'm not sure if 
+this is just for custom prediction routines or all model deployments. Reverting
+the runtime versions for training to 1.15 as a result. 
+
 Ran into multiple issues when doing this, the main one being that errors are 
 very vague. No information is given on exactly what part of the code isn't 
 working, just a general "model" error. For example, I received the following
@@ -606,15 +595,6 @@ Create Version failed. Bad model detected with error:  "Failed to load model:
 Unexpected error when loading the model: Support for generic buffers has not 
 been implemented. (Error code: 0)"
 ```
-
-I was unable to load hdf files even though the tables requirement is included 
-as a required package in the setup.py, and that I was able to create hdf files
-in AI Platform Jobs and AI Platform Notebooks. My best guess is this is 
-versioning discrepancies in AI Platform (similar to my jobs issue with AI 
-Platform runtime 1.14 described above). However, the lack of error information 
-passed to users makes debugging exceptionally hard. Solution here was to pickle
-dataframes rather than utilizing hdf files, but took a lot of guessing to find 
-the eventual issue. Further testing/debugging needed. 
 
 Helpful note from Google (make sure to do this to avoid overwriting files):
 When you create subsequent versions of your model, organize them by placing 

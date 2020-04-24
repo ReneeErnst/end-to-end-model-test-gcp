@@ -108,8 +108,8 @@ def deploy_local_train(args: argparse.Namespace):
         '--',
         '--run_location=local',
         '--bucket=None',
-		f'--project={args.project}',
-		f'--dataset_table={args.dataset_table}'
+        f'--project={args.project}',
+        f'--dataset_table={args.dataset_table}'
     ]
     result = subprocess.run(command)
 
@@ -134,8 +134,8 @@ def deploy_trainer(args: argparse.Namespace):
         '--runtime-version', '1.15',
         '--',
         f'--bucket={args.bucket}',
-		f'--project={args.project}',
-		f'--dataset_table={args.dataset_table}'
+        f'--project={args.project}',
+        f'--dataset_table={args.dataset_table}'
     ]
 
     result = subprocess.run(command)
