@@ -589,17 +589,6 @@ Ran into a runtime version error - 2.1 is not yet supported. I'm not sure if
 this is just for custom prediction routines or all model deployments. Reverting
 the runtime versions for training to 1.15 as a result. 
 
-Ran into multiple issues when doing this, the main one being that errors are 
-very vague. No information is given on exactly what part of the code isn't 
-working, just a general "model" error. For example, I received the following
-generic error:
-
-```
-Create Version failed. Bad model detected with error:  "Failed to load model: 
-Unexpected error when loading the model: Support for generic buffers has not 
-been implemented. (Error code: 0)"
-```
-
 Helpful note from Google (make sure to do this to avoid overwriting files):
 When you create subsequent versions of your model, organize them by placing 
 each one into its own separate directory within your Cloud Storage bucket.
@@ -622,10 +611,11 @@ getting a sample model prediction.
 Run the following with the appropriate parameters set to get a prediction from 
 your deployed model: 
 
-ToDo have python use the env variable rather than needing credentials file
+**NOTE:** Make sure you are authenticated first. See training jobs section for 
+more info.
+
 ```
 python predict.py 
-  --credentials <path_to_local_credientials_file> 
   --project <project-name>
   --model <model-name>
   --version <model-version>
