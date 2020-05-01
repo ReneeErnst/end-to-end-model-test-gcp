@@ -360,7 +360,6 @@ running the gcloud commands for deploying jobs and prediction routines.
 **Sample running via deploy.py:**
 ```
 python deploy.py train 
-  --staging-path <gs://staging_bucket/where_to_store_training_package>
   --bucket <bucket_name_for_model_objects>
   --path <path_in_bucket_for_model_objects> 
   --name <name_of_training_job>
