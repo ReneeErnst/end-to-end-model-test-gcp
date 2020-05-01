@@ -15,12 +15,6 @@ def parse():
         prog='prediction',
         description='Command to run prediction against deployed model'
         )
-
-    parser.add_argument(
-        '--credentials',
-        required=True,
-        help='Path to credentials file locally'
-    )
     parser.add_argument(
         '--project',
         required=True,
@@ -45,7 +39,6 @@ def predict_json(args: argparse.Namespace):
     :param args:
     :return: Model prediction
     """
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = args.credentials
 
     service = gapi.build('ml', 'v1')
     name = f'projects/{args.project}/models/{args.model}'

@@ -14,17 +14,16 @@ parser = argparse.ArgumentParser()
 # --job-dir isn't needed by us, but it gets passed so we need to have this here
 parser.add_argument('--job-dir')
 
-# passed in info on if running locally
 parser.add_argument('--run_location')
-
-# passed in name of bucket
 parser.add_argument('--bucket')
+parser.add_argument('--path')
 
 args = parser.parse_args(sys.argv[1:])
 print(vars(args))
 
 RUN_LOCATION = args.run_location
 BUCKET_NAME = args.bucket
+PATH = args.path
 
 # Get the data
 if RUN_LOCATION == 'local':
@@ -115,9 +114,9 @@ else:
 
     # Save mapping file
     blob = bucket.blob(
-        'ai_platform_test/iowa_forecasting_artifacts/categorical_mapping.pkl')
+        f'{PATH}/categorical_mapping.pkl')
     blob.upload_from_filename('categorical_mapping.pkl')
 
     # Save model file
-    blob = bucket.blob('ai_platform_test/iowa_forecasting_artifacts/model.pkl')
+    blob = bucket.blob(f'{PATH}/model.pkl')
     blob.upload_from_filename('model.pkl')

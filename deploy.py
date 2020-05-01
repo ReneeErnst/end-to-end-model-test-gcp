@@ -29,17 +29,53 @@ def parse():
     train_parser.add_argument(
         '--bucket',
         required=True,
-        help=textwrap.dedent(
-            """
-            Specify the storage bucket for staging package and outputting
-            model files
-            """
-        )
+        help='Specify the storage bucket for saving model related output'
+    )
+    train_parser.add_argument(
+        '--path',
+        required=True,
+        help='Specify the path in bucket for saving model related output'
     )
     train_parser.add_argument(
         '--name',
         required=True,
-        help='Name of the job for AI Platform Jobs'
+        help='Specify name of job for AI Platform Jobs'
+    )
+
+    # Arguments for local batch training
+    local_batch_train_parser = sub_parsers.add_parser('local_batch_train')
+    local_batch_train_parser.add_argument(
+        '--project',
+        required=True,
+        help='Specify project name'
+    )
+    local_batch_train_parser.add_argument(
+        '--dataset_table',
+        required=True,
+        help='Specify output dataset.table in BigQuery'
+    )
+
+    # Arguments for batch training job
+    batch_train_parser = sub_parsers.add_parser('batch_train')
+    batch_train_parser.add_argument(
+        '--bucket',
+        required=True,
+        help='Specify the storage bucket for saving model related output'
+    )
+    batch_train_parser.add_argument(
+        '--name',
+        required=True,
+        help='Specify name of job for AI Platform Jobs'
+    )
+    batch_train_parser.add_argument(
+        '--project',
+        required=True,
+        help='Specify project name'
+    )
+    batch_train_parser.add_argument(
+        '--dataset_table',
+        required=True,
+        help='Specify output dataset.table in BigQuery'
     )
 
     # Prediction inputs
@@ -112,7 +148,58 @@ def deploy_trainer(args: argparse.Namespace):
         '--python-version', '3.7',
         '--runtime-version', '1.15',
         '--',
-        f'--bucket={args.bucket}'
+        f'--bucket={args.bucket}',
+        f'--path={args.path}'
+    ]
+
+    result = subprocess.run(command)
+
+    return result.check_returncode()
+
+
+def deploy_local_batch_train(args: argparse.Namespace):
+    """
+    Run command to test training job locally
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
+    command = [
+        'powershell.exe',
+        'gcloud', 'ai-platform', 'local', 'train',
+        '--package-path', 'modeling',
+        '--module-name', 'modeling.trainer.batch_model',
+        '--job-dir', 'local-training-output',
+        '--',
+        '--run_location=local',
+        '--bucket=None',
+        f'--project={args.project}',
+        f'--dataset_table={args.dataset_table}'
+    ]
+    result = subprocess.run(command)
+
+    return result.check_returncode()
+
+
+def deploy_batch_trainer(args: argparse.Namespace):
+    """
+    Run command to run training job in AI Platform
+    :param args: args needed to run the command
+    :return: output from running the command
+    """
+    command = [
+        'powershell.exe',
+        'gcloud', 'ai-platform',
+        'jobs', 'submit', 'training',
+        args.name,
+        '--package-path', 'modeling',
+        '--module-name', 'modeling.trainer.batch_model',
+        '--staging-bucket', f'gs://{args.bucket}',
+        '--python-version', '3.7',
+        '--runtime-version', '1.15',
+        '--',
+        f'--bucket={args.bucket}',
+        f'--project={args.project}',
+        f'--dataset_table={args.dataset_table}'
     ]
 
     result = subprocess.run(command)
@@ -153,6 +240,10 @@ def main():
         return deploy_local_train(args)
     elif args.action == 'train':
         return deploy_trainer(args)
+    elif args.action == 'local_batch_train':
+        return deploy_local_batch_train(args)
+    elif args.action == 'batch_train':
+        return deploy_batch_trainer(args)
     elif args.action == 'predict':
         return deploy_predictor(args)
     raise ValueError(f'Unknown action "{args.action}"')
