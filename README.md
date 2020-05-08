@@ -287,8 +287,8 @@ https://cloud.google.com/ml-engine/docs/packaging-trainer
 #### Running the job locally
 It is best practice to test training your job locally (usually on a sample of 
 data) to ensure your packaged code is working before submitting your job to run 
-on AI Platform. Make sure to run this from the location of your repo. The 
-command structure for this is:
+on AI Platform. Make sure to run this from the location of your repo and ensure 
+all required packages have been installed. The command structure for this is:
 
 ##### Authentication:
 When running locally, make sure that you are first authenticated. 
@@ -328,6 +328,9 @@ python code specific to the model.py code in the trainer for this repo. In
 order to make the training code work for both local training and submitting to 
 AI Platform, we need to have the user defined bucket parameter here, but it can 
 be set to None when running locally.
+
+Refer to the Helpful Links (above) for more information on each of the job 
+parameters used here.
 
 ``` 
 gcloud ai-platform local train  
