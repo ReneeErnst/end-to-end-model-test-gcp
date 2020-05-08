@@ -281,8 +281,8 @@ out to a bucket. Below is documentation for that process, as well as
 issues/gotchas found along the way. 
 
 Helpful Links:
-https://cloud.google.com/ml-engine/docs/training-jobs
-https://cloud.google.com/ml-engine/docs/packaging-trainer
+https://cloud.google.com/ai-platform/training/docs/training-jobs
+https://cloud.google.com/ai-platform/training/docs/packaging-trainer
 
 #### Running the job locally
 It is best practice to test training your job locally (usually on a sample of 
