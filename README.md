@@ -391,14 +391,17 @@ modules in the repo with the trainer code. In this repo, this is referring to
 the dat_prep and model_train modules. Attempted multiple tests, including 
 putting these modules in different locations and deeply exploring the google 
 documentation for a way to indicate we want these modules to be included. 
-No solution was available. Interestingly, there is a `packages=find_packages()`
-option when creating your own setup.py, but no way to specify this when using 
-the gcloud command. This test was ran in Jan 2020 and I'm unsure if an update 
-has been put in place.  
+No solution was available. When creating the package yourself you can include 
+`packages=find_packages()` so that internal packages are included, but there 
+appears to be no way to specify this when using the gcloud submit training job 
+command. This test was ran in Jan 2020 so it is possible this has been 
+addressed, but we have not found info about that. Will re-test to confirm 
+when adding additional functionality.  
 
 **Test 2:** Create setup.py to provide instructions on what should be packaged 
 with the model trainer code. Using this method we were able to specify 
-`packages=find_packages()` to include modules in the repo. 
+`packages=find_packages()` to include our internal packages into the packaged 
+code. 
 
 **Results:** This test correctly included the modules as expected and job was 
 successful

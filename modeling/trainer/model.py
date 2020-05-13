@@ -7,7 +7,7 @@ import pandas as pd
 from google.cloud import bigquery
 from google.cloud import storage
 
-from modeling import model_train as mt, data_prep as dp
+from modeling import aip_example
 
 parser = argparse.ArgumentParser()
 
@@ -66,7 +66,7 @@ cat_vars = [
 ]
 
 # Create dataframe with encoded categorical variables
-df_cat, df_mapping = dp.category_columns(
+df_cat, df_mapping = aip_example.category_columns(
     df,
     cat_vars
 )
@@ -91,7 +91,7 @@ x_cols = [
 ]
 
 # Create model object and importances
-rfr_model, importances = mt.fit_model(
+rfr_model, importances = aip_example.fit_model(
     y_col,
     x_cols,
     df_cat,
